@@ -125,6 +125,29 @@ public class MeetingDataHandler {
         }
         return 0;
     }
+
+    public static long getCreationMeanTime() {
+        long meanTime = 0;
+        try {
+            String sql = "SELECT * FROM Meeting WHERE status = ?";
+            con = DataBaseConnector.getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, 1);
+            ResultSet rs = stmt.executeQuery();
+            Meeting meeting = meetingDBtoDomain(rs);
+            java.sql.Timestamp create = java.sql.Timestamp.valueOf( meeting.getCreateTime() ) ;
+            java.sql.Timestamp set = java.sql.Timestamp.valueOf( meeting.getSetTime() ) ;
+            meanTime = create.getTime() - set.getTime();
+            stmt.close();
+            rs.close();
+            con.close();
+            return meanTime;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
     public static int getCancelledMeetingsNum() {
         String sql = "SELECT * FROM Meeting WHERE status = ?";
 
