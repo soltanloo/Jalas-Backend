@@ -6,11 +6,11 @@ public class PollOption {
     private static int count = 0;
     private int id;
     private ArrayList<String> userList = new ArrayList<>();
-    private String time;
+    private String timeOption;
 
 
-    public PollOption(String time) {
-        this.time = time;
+    public PollOption(String timeOption) {
+        this.timeOption = timeOption;
         this.id = count++;
     }
 
@@ -30,11 +30,11 @@ public class PollOption {
         this.userList = userList;
     }
 
-    public String getTime() {
-        return time;
+    public String getTimeOption() {
+        return timeOption;
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    public void setTimeOption(String timeOption) {
+        this.timeOption = timeOption;
     }
 }
