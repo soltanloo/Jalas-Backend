@@ -3,13 +3,13 @@ package BusinessLogic;
 import DataManagers.MeetingDataHandler;
 
 public class AnalyticServices {
-    int getReseverdRoomsNum(){
+    public static int getReseverdRoomsNum(){
         return MeetingDataHandler.getSetMeetingsNum();
     }
-    int getCanceledMeetingsNum(){
+    public static int getCanceledMeetingsNum(){
         return MeetingDataHandler.getCancelledMeetingsNum();
     }
-    long getCreationMeanTime(){
+    public static long getCreationMeanTime(){
         return MeetingDataHandler.getCreationMeanTime();
     }
 }
