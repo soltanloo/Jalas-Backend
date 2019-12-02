@@ -1,12 +1,12 @@
 package DataManagers;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.JSONObject;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,9 +21,10 @@ public class DataManager {
         DataManager.addSeedPolls();
     }
 
-    private static void addSeedPolls () throws JSONException, IOException, ParseException {
-        JSONParser parser = new JSONParser();
-        PollDataHandler.createSeedPolls((JSONArray) parser.parse(new FileReader("./../SeedRepository/PollSeed")));
+    private static void addSeedPolls () throws JSONException, IOException{
+        String content = Files.readString(Path.of("./../SeedRepository/PollSeed"), StandardCharsets.UTF_8);
+        JSONObject file = new JSONObject(content);
+        PollDataHandler.createSeedPolls(file.getJSONArray("Polls"));
     }
 
     public static void dropExistingTable (String tableName) {
