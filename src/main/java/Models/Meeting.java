@@ -9,29 +9,39 @@ public class Meeting {
     private int roomNumber;
     private String startTime;
     private String finishTime;
-
-    public enum status {
+    private enum Status {
         STALLED  (0),  //calls constructor with value 3
         SET(1),  //calls constructor with value 2
         CANCELLED   (-1)   //calls constructor with value 1
         ; // semicolon needed when fields / methods follow
 
 
-        private final int levelCode;
+        private int levelCode;
 
-        status(int levelCode) {
+        Status(int levelCode) {
             this.levelCode = levelCode;
         }
 
+        public void setStatus(int levelCode) {
+            this.levelCode = levelCode;
+        }
         public int getLevelCode() {
             return this.levelCode;
         }
 
+
     }
+    Status status;
+
     public Meeting(){
         this.id = count++;
     }
-
+    public Status getStatus(){
+        return status;
+    }
+    public void setStatus(int levelCode){
+        this.status.setStatus(levelCode);
+    }
     public void setId(int id) {
         this.id = id;
     }
