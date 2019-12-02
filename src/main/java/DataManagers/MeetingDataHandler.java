@@ -91,7 +91,7 @@ public class MeetingDataHandler {
             PreparedStatement st1 = con.prepareStatement(sql1);
             PreparedStatement st2 = con.prepareStatement(sql2);
 
-            st1.setInt(1, meeting.getStatus().getLevelCode());
+            st1.setInt(1, Meeting.Status.SET.getLevelCode());
             st2.setString(1, sdf.format(timestamp));
 
             st1.setInt(2, meeting.getId());
