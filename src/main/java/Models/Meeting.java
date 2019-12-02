@@ -30,7 +30,6 @@ public class Meeting {
         return id;
     }
 
-
     public String getStartTime() {
         return startTime;
     }

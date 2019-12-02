@@ -1,6 +1,7 @@
 package Controllers;
 
 import BusinessLogic.MeetingServices;
+import Models.Meeting;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,9 @@ public class MeetingController {
         try {
             JSONObject data = new JSONObject(reqData);
 
-            int meetingID = MeetingServices.addMeeting(data);
-            if(meetingID != -1) {
-                ResponseEntity.ok(meetingID);
+            Meeting meeting = MeetingServices.addMeeting(data);
+            if(meeting != null) {
+                ResponseEntity.ok(meeting);
             }
             else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

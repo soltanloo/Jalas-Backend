@@ -26,21 +26,4 @@ public class RoomsController {
             return new ResponseEntity<>("Couldn't fetch rooms list from server!", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
-
-    @RequestMapping(value = "/api/reserveRoom", method = RequestMethod.POST)
-    public ResponseEntity reserveRoom(HttpServletRequest req, @RequestBody String reqData) {
-        try {
-            JSONObject data = new JSONObject(reqData);
-            if(RoomServices.reserveRoom(data)) {
-                ResponseEntity.ok("Room reserved successfully!");
-            }
-            else {
-                return new ResponseEntity<>("Couldn't reserve room from server!", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return new ResponseEntity<>("Couldn't reserve room from server!", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
 }
