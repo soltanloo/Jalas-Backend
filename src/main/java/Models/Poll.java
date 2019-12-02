@@ -1,5 +1,6 @@
 package Models;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -7,8 +8,20 @@ public class Poll {
     private static int count = 0;
     private int id;
     private String title;
-    private HashMap<String, List<Vote>> votesList;
-    private String chosenTime;
+    private ArrayList<PollOption> options;
+
+
+    public ArrayList<PollOption> getOptions() {
+        return options;
+    }
+
+    public void setOptions(ArrayList<PollOption> options) {
+        this.options = options;
+    }
+
+    public void addOption(PollOption option) {
+        this.options.add(option);
+    }
 
     public String getTitle() {
         return title;
@@ -16,22 +29,6 @@ public class Poll {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public HashMap<String, List<Vote>> getVotesList() {
-        return votesList;
-    }
-
-    public void setVotesList(HashMap<String, List<Vote>> votesList) {
-        this.votesList = votesList;
-    }
-
-    public String getChosenTime() {
-        return chosenTime;
-    }
-
-    public void setChosenTime(String chosenTime) {
-        this.chosenTime = chosenTime;
     }
 
     public Poll(){
