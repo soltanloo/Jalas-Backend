@@ -90,6 +90,50 @@ public class MeetingDataHandler {
             e.printStackTrace();
         }
     }
+    public static int getSetMeetingsNum(){
+        String sql = "SELECT * FROM Meeting WHERE status = ?";
+
+        int meetingsSet = 0;
+        try {
+            con = DataBaseConnector.getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, 1);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                meetingsSet += 1;
+            }
+
+            stmt.close();
+            rs.close();
+            con.close();
+            return meetingsSet;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+    public static int getCancelledMeetingsNum() {
+        String sql = "SELECT * FROM Meeting WHERE status = ?";
+
+        int meetingsCancelled = 0;
+        try {
+            con = DataBaseConnector.getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, -1);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                meetingsCancelled += 1;
+            }
+
+            stmt.close();
+            rs.close();
+            con.close();
+            return meetingsCancelled;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
 
     public static ArrayList<Meeting> getStalledMeetings() {
         String sql = "SELECT * FROM Meeting WHERE status = ?";
