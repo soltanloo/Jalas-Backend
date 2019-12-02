@@ -24,7 +24,7 @@ public class PollOptionDataHandler {
                     "PollOption " +
                     "(id INTEGER PRIMARY KEY," +
                     "userList TEXT , " +
-                    "timeOption TEXT, ";
+                    "timeOption TEXT)";
             st.executeUpdate(sql);
 
             st.close();

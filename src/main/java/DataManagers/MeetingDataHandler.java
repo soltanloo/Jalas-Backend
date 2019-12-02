@@ -3,11 +3,12 @@ package DataManagers;
 import Models.Meeting;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class MeetingDataHandler {
     private static Connection con = null;
 
-    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime)";
+    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status)";
 
     public static void init() {
         try {
@@ -20,25 +21,10 @@ public class MeetingDataHandler {
                     "(id INTEGER PRIMARY KEY," +
                     "roomNumber INTEGER , " +
                     "startTime TEXT, " +
-                    "finishTime TEXT";
+                    "finishTime TEXT, " +
+                    "status INTEGER)";
             st.executeUpdate(sql);
 
-            st.close();
-            con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void updateRoomNumber(int roomNumber, int id) {
-        String sql = "UPDATE Meeting SET roomNumber = ? where id = ?";
-
-        try {
-            con = DataBaseConnector.getConnection();
-            PreparedStatement st = con.prepareStatement(sql);
-            st.setInt(1, roomNumber);
-            st.setInt(2, id);
-            st.executeUpdate();
             st.close();
             con.close();
         } catch (SQLException e) {
@@ -83,6 +69,45 @@ public class MeetingDataHandler {
             rs.close();
             con.close();
             return meeting;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static void setMeetingStatus(Meeting meeting) {
+        String sql = "UPDATE Meeting SET status = ? where id = ?";
+
+        try {
+            con = DataBaseConnector.getConnection();
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setInt(1, meeting.getRoomNumber());
+            st.setInt(2, meeting.getId());
+            st.executeUpdate();
+            st.close();
+            con.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static ArrayList<Meeting> getStalledMeetings() {
+        String sql = "SELECT * FROM Meeting WHERE status = ?";
+
+        ArrayList<Meeting> meetings = new ArrayList<>();
+        try {
+            con = DataBaseConnector.getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, 0);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                meetings.add(meetingDBtoDomain(rs));
+            }
+
+            stmt.close();
+            rs.close();
+            con.close();
+            return meetings;
         } catch (SQLException e) {
             e.printStackTrace();
         }

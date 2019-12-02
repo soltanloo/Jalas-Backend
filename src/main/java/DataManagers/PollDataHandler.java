@@ -30,7 +30,7 @@ public class PollDataHandler {
                     "Meeting " +
                     "(id INTEGER PRIMARY KEY," +
                     "title TEXT , " +
-                    "options TEXT, ";
+                    "options TEXT)";
             st.executeUpdate(sql);
 
             st.close();
