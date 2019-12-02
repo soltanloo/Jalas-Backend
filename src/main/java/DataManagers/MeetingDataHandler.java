@@ -3,6 +3,7 @@ package DataManagers;
 import Models.Meeting;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class MeetingDataHandler {
@@ -99,8 +100,15 @@ public class MeetingDataHandler {
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, 1);
             ResultSet rs = stmt.executeQuery();
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss");
+            Date date = new Date(System.currentTimeMillis());
+            String dateString = formatter.format(date);
             while (rs.next()) {
-                meetingsSet += 1;
+                Meeting meeting = meetingDBtoDomain(rs);
+
+                if(meeting.getFinishTime().compareTo(dateString) == 1){
+                    meetingsSet += 1;
+                }
             }
 
             stmt.close();
