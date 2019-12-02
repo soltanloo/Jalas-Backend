@@ -14,6 +14,14 @@ public class PollOption {
         this.id = count++;
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public ArrayList<String> getUserList() {
         return userList;
     }
