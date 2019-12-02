@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
+@CrossOrigin (origins = "*", allowedHeaders = "*")
 @RestController
 public class MeetingController {
     @RequestMapping (value = "/api/meeting", method = RequestMethod.POST)
@@ -27,5 +28,16 @@ public class MeetingController {
             e.printStackTrace();
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @RequestMapping(value = "/api/meeting/{id}/cancel", method = RequestMethod.POST)
+    public ResponseEntity cancelMeeting (HttpServletRequest req, @PathVariable String id) {
+
+        if(MeetingServices.cancelMeeting(Integer.parseInt(id))) {
+            return ResponseEntity.ok("deleted");
+        }
+        else {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

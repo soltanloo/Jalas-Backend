@@ -7,6 +7,7 @@ import BusinessLogic.RoomServices;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
+@CrossOrigin (origins = "*", allowedHeaders = "*")
 @RestController
 public class RoomsController {
 

@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import static BusinessLogic.AnalyticServices.*;
 
+@CrossOrigin (origins = "*", allowedHeaders = "*")
 @RestController
 public class AnalyticController {
     @RequestMapping (value = "/api/analytic", method = RequestMethod.GET)
