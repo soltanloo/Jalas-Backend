@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 
 public class MeetingServices {
 
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DDTHH:mm:ss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     public static Meeting addMeeting(JSONObject data) throws JSONException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
