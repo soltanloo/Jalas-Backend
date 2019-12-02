@@ -143,12 +143,15 @@ public class MeetingDataHandler {
             String sql = "SELECT * FROM Meeting WHERE status = ?";
             con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setInt(1, 1);
+            stmt.setInt(1, Meeting.Status.SET.getLevelCode());
             ResultSet rs = stmt.executeQuery();
-            Meeting meeting = meetingDBtoDomain(rs);
-            java.sql.Timestamp create = java.sql.Timestamp.valueOf( meeting.getCreateTime() ) ;
-            java.sql.Timestamp set = java.sql.Timestamp.valueOf( meeting.getSetTime() ) ;
-            meanTime = create.getTime() - set.getTime();
+            while(rs.next()) {
+                Meeting meeting = meetingDBtoDomain(rs);
+                java.sql.Timestamp create = java.sql.Timestamp.valueOf( meeting.getCreateTime() ) ;
+                java.sql.Timestamp set = java.sql.Timestamp.valueOf( meeting.getSetTime() ) ;
+                meanTime = create.getTime() - set.getTime();
+            }
+
             stmt.close();
             rs.close();
             con.close();
