@@ -19,7 +19,6 @@ public class MeetingServices {
         meeting.setRoomNumber(data.getInt("roomNumber"));
         meeting.setStartTime(data.getString("startTime"));
         meeting.setFinishTime(data.getString("finishTime"));
-        meeting.setStatus(Meeting.Status.STALLED.getLevelCode());
         meeting.setCreateTime(sdf.format(timestamp));
 
         if(MeetingDataHandler.addMeeting(meeting)) {

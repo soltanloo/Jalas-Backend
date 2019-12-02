@@ -39,6 +39,7 @@ public class Meeting {
 
     public Meeting(){
         this.id = count++;
+        this.status = Status.STALLED;
     }
     public Status getStatus(){
         return status;
