@@ -22,7 +22,7 @@ public class MeetingController {
                 ResponseEntity.ok(meeting);
             }
             else {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in reserving room");
             }
         } catch (JSONException e) {
             e.printStackTrace();
