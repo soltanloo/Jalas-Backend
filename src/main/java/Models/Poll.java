@@ -39,6 +39,17 @@ public class Poll {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 
+    public ArrayList<String> getOptionsIDs() {
+        ArrayList<String> retList = new ArrayList<>();
+
+        for(PollOption pollOption : this.options) {
+            retList.add(Integer.toString(pollOption.getId()));
+        }
+        return retList;
+    }
 
 }
