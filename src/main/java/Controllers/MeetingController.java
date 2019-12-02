@@ -27,7 +27,7 @@ public class MeetingController {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
     }
 
     @RequestMapping(value = "/api/meeting/{id}/cancel", method = RequestMethod.POST)
