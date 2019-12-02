@@ -26,7 +26,9 @@ public class MeetingDataHandler {
                     "roomNumber INTEGER, " +
                     "startTime TEXT, " +
                     "finishTime TEXT, " +
-                    "status INTEGER)";
+                    "status INTEGER, " +
+                    "createTime TEXT, " +
+                    "setTime TEXT)";
             st.executeUpdate(sql);
 
             st.close();
