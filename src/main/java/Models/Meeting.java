@@ -9,7 +9,7 @@ public class Meeting {
     private int roomNumber;
     private String startTime;
     private String finishTime;
-    private enum Status {
+    public enum Status {
         STALLED  (0),  //calls constructor with value 3
         SET(1),  //calls constructor with value 2
         CANCELLED   (-1)   //calls constructor with value 1

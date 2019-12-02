@@ -12,7 +12,7 @@ import java.sql.*;
 public class PollOptionDataHandler {
     private static Connection con = null;
 
-    private static final String COLUMNS = "(id, userList, timeOption)";
+    private static final String COLUMNS = "(id, userList, startTime, finishTime)";
 
     public static void init() {
         try {
@@ -24,7 +24,8 @@ public class PollOptionDataHandler {
                     "PollOption " +
                     "(id INTEGER PRIMARY KEY," +
                     "userList TEXT , " +
-                    "timeOption TEXT)";
+                    "startTime TEXT , " +
+                    "finishTime TEXT)";
             st.executeUpdate(sql);
 
             st.close();
@@ -35,7 +36,7 @@ public class PollOptionDataHandler {
     }
 
     public static boolean addOption(PollOption option) {
-        String sql = "INSERT INTO PollOption " + COLUMNS + " VALUES (?, ?, ?)";
+        String sql = "INSERT INTO PollOption " + COLUMNS + " VALUES (?, ?, ?, ?)";
 
         try{
             con = DataBaseConnector.getConnection();
@@ -100,7 +101,8 @@ public class PollOptionDataHandler {
         try {
             st.setInt(1, option.getId());
             st.setString(2, DataHelpers.stringify(option.getUserList()));
-            st.setString(3, option.getTimeOption());
+            st.setString(3, option.getStartTime());
+            st.setString(4, option.getFinishTime());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -109,7 +111,7 @@ public class PollOptionDataHandler {
     public static PollOption PollOptionDBtoDomain(ResultSet rs) {
 
         try {
-            PollOption option = new PollOption(rs.getString("timeOption"));
+            PollOption option = new PollOption(rs.getString("startTime"), rs.getString("finishTime"));
             option.setId(rs.getInt("id"));
             option.setUserList(DataHelpers.makeList(rs.getString("userList")));
             return option;

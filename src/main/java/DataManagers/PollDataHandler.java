@@ -147,7 +147,7 @@ public class PollDataHandler {
             JSONArray jOptions = jPoll.getJSONArray("options");
             ArrayList<PollOption> pollOptions = new ArrayList<>();
             for(int j = 0; j < jOptions.length(); j++) {
-                PollOption pollOption = new PollOption(jOptions.getJSONObject(j).getString("timeOption"));
+                PollOption pollOption = new PollOption(jOptions.getJSONObject(j).getString("startTime"), jOptions.getJSONObject(j).getString("finishTime"));
                 pollOption.setId(jOptions.getJSONObject(j).getInt("id"));
                 pollOption.setUserList(DataHelpers.makeList(jOptions.getJSONObject(j).getString("userList")));
                 pollOptions.add(pollOption);

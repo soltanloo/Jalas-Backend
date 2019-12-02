@@ -18,8 +18,8 @@ public class MeetingDataHandler {
 
             String sql = "CREATE TABLE " +
                     "Meeting " +
-                    "(id INTEGER PRIMARY KEY," +
-                    "roomNumber INTEGER , " +
+                    "(id INTEGER PRIMARY KEY, " +
+                    "roomNumber INTEGER, " +
                     "startTime TEXT, " +
                     "finishTime TEXT, " +
                     "status INTEGER)";
@@ -33,7 +33,7 @@ public class MeetingDataHandler {
     }
 
     public static boolean addMeeting(Meeting meeting) {
-        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?, ?)";
 
         try{
             con = DataBaseConnector.getConnection();
@@ -81,7 +81,7 @@ public class MeetingDataHandler {
         try {
             con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
-            st.setInt(1, meeting.getRoomNumber());
+            st.setInt(1, meeting.getStatus().getLevelCode());
             st.setInt(2, meeting.getId());
             st.executeUpdate();
             st.close();
@@ -114,12 +114,30 @@ public class MeetingDataHandler {
         return null;
     }
 
+    public static boolean cancelMeeting(int id) {
+        String sql = "UPDATE Meeting SET status = ? where id = ?";
+        try {
+            con = DataBaseConnector.getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, Meeting.Status.CANCELLED.getLevelCode());
+            stmt.setInt(2, id);
+            stmt.executeUpdate();
+            stmt.close();
+            con.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static void meetingDomainToDB(Meeting meeting,  PreparedStatement st) {
         try {
             st.setInt(1, meeting.getId());
             st.setInt(2, meeting.getRoomNumber());
             st.setString(3, meeting.getStartTime());
             st.setString(4, meeting.getFinishTime());
+            st.setInt(5, meeting.getStatus().getLevelCode());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -132,6 +150,7 @@ public class MeetingDataHandler {
             meeting.setRoomNumber(rs.getInt("roomNumber"));
             meeting.setStartTime(rs.getString("startTime"));
             meeting.setFinishTime(rs.getString("finnishTime"));
+            meeting.setStatus(rs.getInt("status"));
         } catch(SQLException e) {
             e.printStackTrace();
         }
