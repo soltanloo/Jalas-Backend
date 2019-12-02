@@ -15,7 +15,7 @@ public class RoomReservationService {
             .version(HttpClient.Version.HTTP_2)
             .build();
 
-    public static List<Integer> getFreeRooms(String startTime, String endTime) {
+    public static ArrayList<Integer> getFreeRooms(String startTime, String endTime) {
         String uri = "http://213.233.176.40/available_rooms" + "?start=" + startTime + "&end=" + endTime;
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -30,8 +30,11 @@ public class RoomReservationService {
             e.printStackTrace();
         }
 
-        if(response.statusCode() != 200)
+        if(response.statusCode() != 200) {
+            System.out.println(response.statusCode());
+            System.out.println(response.body());
             return null;
+        }
 
         ArrayList<Integer> retRoomList = new ArrayList<>();
         try {
