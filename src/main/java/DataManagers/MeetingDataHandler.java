@@ -233,7 +233,7 @@ public class MeetingDataHandler {
             meeting.setId(rs.getInt("id"));
             meeting.setRoomNumber(rs.getInt("roomNumber"));
             meeting.setStartTime(rs.getString("startTime"));
-            meeting.setFinishTime(rs.getString("finnishTime"));
+            meeting.setFinishTime(rs.getString("finishTime"));
             meeting.setStatus(rs.getInt("status"));
             meeting.setCreateTime(rs.getString("createTime"));
             meeting.setSetTime(rs.getString("setTime"));
