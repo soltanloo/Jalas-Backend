@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-public class FetchRooms {
+public class RoomsController {
 
     @RequestMapping (value = "/api/room", method = RequestMethod.GET)
     public ResponseEntity getRooms (HttpServletRequest req) {
@@ -24,4 +24,6 @@ public class FetchRooms {
             return new ResponseEntity<>("Couldn't fetch rooms list from server!", HttpStatus.INTERNAL_SERVER_ERROR);
 
     }
+
+
 }

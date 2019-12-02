@@ -61,6 +61,29 @@ public class PollDataHandler {
         return true;
     }
 
+    public static ArrayList<Poll> getAllPols() {
+        String sql = "SELECT * FROM Poll";
+
+        ArrayList<Poll> polls = new ArrayList<>();
+        try {
+            con = DataBaseConnector.getConnection();
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                polls.add(pollDBtoDomain(rs));
+            }
+
+            stmt.close();
+            rs.close();
+            con.close();
+            return polls;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static Poll getPoll(int id) {
         String sql = "SELECT * FROM Poll WHERE id = ?";
 

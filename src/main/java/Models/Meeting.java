@@ -5,8 +5,8 @@ import java.util.Date;
 public class Meeting {
 
     private static int count = 0;
-    private int roomNumber;
     private int id;
+    private int roomNumber;
     private String startTime;
     private String finishTime;
 
