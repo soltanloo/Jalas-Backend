@@ -10,8 +10,9 @@ public class Meeting {
     private int roomNumber;
     private String startTime;
     private String finishTime;
-    private Timestamp createTime;
-    private Timestamp setTime;
+    private String createTime;
+    private String setTime;
+
     public enum Status {
         STALLED  (0),  //calls constructor with value 3
         SET(1),  //calls constructor with value 2
@@ -77,6 +78,21 @@ public class Meeting {
         this.finishTime = finishTime;
     }
 
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public String getSetTime() {
+        return setTime;
+    }
+
+    public void setSetTime(String setTime) {
+        this.setTime = setTime;
+    }
 
 }
 
