@@ -5,11 +5,14 @@ import Models.Meeting;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 
 public class MeetingDataHandler {
     private static Connection con = null;
 
-    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status)";
+    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status, createTime, setTime)";
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DDTHH:mm:ss");
 
     public static void init() {
         try {
@@ -34,7 +37,7 @@ public class MeetingDataHandler {
     }
 
     public static boolean addMeeting(Meeting meeting) {
-        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?)";
 
         try{
             con = DataBaseConnector.getConnection();
@@ -77,13 +80,15 @@ public class MeetingDataHandler {
     }
 
     public static void setMeetingStatus(Meeting meeting) {
-        String sql = "UPDATE Meeting SET status = ? where id = ?";
+        String sql = "UPDATE Meeting SET status = ? AND setTime = ? where id = ?";
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         try {
             con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
             st.setInt(1, meeting.getStatus().getLevelCode());
-            st.setInt(2, meeting.getId());
+            st.setString(2, sdf.format(timestamp));
+            st.setInt(3, meeting.getId());
             st.executeUpdate();
             st.close();
             con.close();
@@ -190,6 +195,8 @@ public class MeetingDataHandler {
             st.setString(3, meeting.getStartTime());
             st.setString(4, meeting.getFinishTime());
             st.setInt(5, meeting.getStatus().getLevelCode());
+            st.setString(6, meeting.getCreateTime());
+            st.setString(7, meeting.getSetTime());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -203,6 +210,8 @@ public class MeetingDataHandler {
             meeting.setStartTime(rs.getString("startTime"));
             meeting.setFinishTime(rs.getString("finnishTime"));
             meeting.setStatus(rs.getInt("status"));
+            meeting.setCreateTime(rs.getString("createTime"));
+            meeting.setSetTime(rs.getString("setTime"));
         } catch(SQLException e) {
             e.printStackTrace();
         }
