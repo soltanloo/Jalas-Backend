@@ -27,7 +27,7 @@ public class PollDataHandler {
             Statement st = con.createStatement();
 
             String sql = "CREATE TABLE " +
-                    "Meeting " +
+                    "Poll " +
                     "(id INTEGER PRIMARY KEY," +
                     "title TEXT , " +
                     "options TEXT)";
@@ -93,10 +93,14 @@ public class PollDataHandler {
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
+
             while (rs.next()) {
-                if (rs.getString(1).equals(id))
-                    poll = pollDBtoDomain(rs);
+                System.out.println("here");
+                poll = pollDBtoDomain(rs);
+                System.out.println(poll.getId());
             }
+            System.out.println("hereOut");
+
             if (poll == null)
                 return null;
 
@@ -121,19 +125,21 @@ public class PollDataHandler {
     }
 
     public static Poll pollDBtoDomain(ResultSet rs) {
-        Poll poll = new Poll();
         try {
+            Poll poll = new Poll();
             poll.setId(rs.getInt("id"));
             poll.setTitle(rs.getString("title"));
+
             ArrayList<PollOption> pollOptions = new ArrayList<>();
             for(String id : DataHelpers.makeList(rs.getString("options"))) {
                 pollOptions.add(PollOptionDataHandler.getPollOption(Integer.parseInt(id)));
             }
             poll.setOptions(pollOptions);
+            return poll;
         } catch(SQLException e) {
             e.printStackTrace();
         }
-        return poll;
+        return null;
     }
 
     public static void createSeedPolls(JSONArray jsonPolls) throws JSONException {

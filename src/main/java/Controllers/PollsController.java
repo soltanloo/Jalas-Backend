@@ -28,6 +28,6 @@ public class PollsController {
         if (poll != null)
             return ResponseEntity.ok(poll);
         else
-            return new ResponseEntity<>("project not found with this ID!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Poll not found with this ID!", HttpStatus.NOT_FOUND);
     }
 }

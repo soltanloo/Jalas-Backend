@@ -63,8 +63,7 @@ public class PollOptionDataHandler {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                if (rs.getString(1).equals(id))
-                    option = PollOptionDBtoDomain(rs);
+                option = PollOptionDBtoDomain(rs);
             }
             if (option == null)
                 return null;
