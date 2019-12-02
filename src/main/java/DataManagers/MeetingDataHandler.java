@@ -125,6 +125,7 @@ public class MeetingDataHandler {
         }
         return 0;
     }
+
     public static int getCancelledMeetingsNum() {
         String sql = "SELECT * FROM Meeting WHERE status = ?";
 
