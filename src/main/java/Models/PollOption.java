@@ -3,13 +3,15 @@ package Models;
 import java.util.ArrayList;
 
 public class PollOption {
-
+    private static int count = 0;
+    private int id;
     private ArrayList<String> userList = new ArrayList<>();
     private String time;
 
 
     public PollOption(String time) {
         this.time = time;
+        this.id = count++;
     }
 
     public ArrayList<String> getUserList() {
