@@ -95,11 +95,8 @@ public class PollDataHandler {
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
-                System.out.println("here");
                 poll = pollDBtoDomain(rs);
-                System.out.println(poll.getId());
             }
-            System.out.println("hereOut");
 
             if (poll == null)
                 return null;
@@ -129,10 +126,11 @@ public class PollDataHandler {
             Poll poll = new Poll();
             poll.setId(rs.getInt("id"));
             poll.setTitle(rs.getString("title"));
-
             ArrayList<PollOption> pollOptions = new ArrayList<>();
-            for(String id : DataHelpers.makeList(rs.getString("options"))) {
+            String userList = rs.getString("options");
+            for(String id : DataHelpers.makeList(userList)) {
                 pollOptions.add(PollOptionDataHandler.getPollOption(Integer.parseInt(id)));
+
             }
             poll.setOptions(pollOptions);
             return poll;

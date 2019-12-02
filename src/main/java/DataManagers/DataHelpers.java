@@ -6,10 +6,15 @@ import java.util.List;
 public class DataHelpers {
     public static String stringify(List<String> list) {
         String rs = "";
+        boolean isFirst = true;
         for (String s : list) {
-            rs = rs + ',' + s;
+            if(isFirst) {
+                rs = s;
+                isFirst = false;
+            }
+            else
+                rs = rs + ',' + s;
         }
-        rs.substring(1);
         return rs;
     }
 
