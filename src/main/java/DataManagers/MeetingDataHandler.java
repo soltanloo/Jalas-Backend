@@ -12,7 +12,7 @@ public class MeetingDataHandler {
     private static Connection con = null;
 
     private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status, createTime, setTime)";
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DDTHH:mm:ss");
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     public static void init() {
         try {
@@ -105,7 +105,7 @@ public class MeetingDataHandler {
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, 1);
             ResultSet rs = stmt.executeQuery();
-            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-ddTHH:mm:ss");
+            SimpleDateFormat formatter= new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
             Date date = new Date(System.currentTimeMillis());
             String dateString = formatter.format(date);
             while (rs.next()) {
