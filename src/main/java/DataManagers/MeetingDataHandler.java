@@ -82,17 +82,26 @@ public class MeetingDataHandler {
     }
 
     public static void setMeetingStatus(Meeting meeting) {
-        String sql = "UPDATE Meeting SET status = ? AND setTime = ? where id = ?";
+        String sql1 = "UPDATE Meeting SET status = ? where id = ?";
+        String sql2 = "UPDATE Meeting SET setTime = ? where id = ?";
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         try {
             con = DataBaseConnector.getConnection();
-            PreparedStatement st = con.prepareStatement(sql);
-            st.setInt(1, meeting.getStatus().getLevelCode());
-            st.setString(2, sdf.format(timestamp));
-            st.setInt(3, meeting.getId());
-            st.executeUpdate();
-            st.close();
+            PreparedStatement st1 = con.prepareStatement(sql1);
+            PreparedStatement st2 = con.prepareStatement(sql2);
+
+            st1.setInt(1, meeting.getStatus().getLevelCode());
+            st2.setString(1, sdf.format(timestamp));
+
+            st1.setInt(2, meeting.getId());
+            st2.setInt(2, meeting.getId());
+
+            st1.executeUpdate();
+            st2.executeUpdate();
+
+            st1.close();
+            st2.close();
             con.close();
         } catch (SQLException e) {
             e.printStackTrace();
