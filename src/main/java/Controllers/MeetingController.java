@@ -14,10 +14,11 @@ import javax.servlet.http.HttpServletRequest;
 public class MeetingController {
     @RequestMapping (value = "/api/meeting", method = RequestMethod.POST)
     public ResponseEntity addMeeting (HttpServletRequest req, @RequestBody String reqData) {
+        Meeting meeting = null;
         try {
             JSONObject data = new JSONObject(reqData);
 
-            Meeting meeting = MeetingServices.addMeeting(data);
+            meeting = MeetingServices.addMeeting(data);
             if(meeting != null) {
                 ResponseEntity.ok(meeting);
             }
@@ -27,7 +28,10 @@ public class MeetingController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+        if(meeting == null)
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal server error");
+        else
+            ResponseEntity.ok(meeting);
     }
 
     @RequestMapping(value = "/api/meeting/{id}/cancel", method = RequestMethod.POST)
