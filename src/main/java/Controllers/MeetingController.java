@@ -11,12 +11,13 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 public class MeetingController {
     @RequestMapping (value = "/api/meeting", method = RequestMethod.POST)
-    public ResponseEntity endorse (HttpServletRequest req, @RequestBody String reqData) {
+    public ResponseEntity addMeeting (HttpServletRequest req, @RequestBody String reqData) {
         try {
             JSONObject data = new JSONObject(reqData);
 
-            if(MeetingServices.addMeeting(data)) {
-                ResponseEntity.ok("Meeting added successfully!");
+            int meetingID = MeetingServices.addMeeting(data);
+            if(meetingID != -1) {
+                ResponseEntity.ok(meetingID);
             }
             else {
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
