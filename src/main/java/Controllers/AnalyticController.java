@@ -17,13 +17,13 @@ public class AnalyticController {
     public ResponseEntity getAnalytics(HttpServletRequest req) {
         int reservedRoomsNum = getReseverdRoomsNum();
         int canceledMeetingsNum = getCanceledMeetingsNum();
-        long creationMeanTime = getCreationMeanTime();
+//        long creationMeanTime = getCreationMeanTime();
 
         JSONObject data = new JSONObject();
         try {
             data.put("reservedRoomsNum", reservedRoomsNum);
             data.put("canceledMeetingsNum", canceledMeetingsNum);
-            data.put("creationMeanTime", creationMeanTime);
+//            data.put("creationMeanTime", creationMeanTime);
             return ResponseEntity.ok(data.toString());
         } catch (JSONException e) {
             e.printStackTrace();

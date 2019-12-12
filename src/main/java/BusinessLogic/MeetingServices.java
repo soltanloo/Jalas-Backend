@@ -24,8 +24,9 @@ public class MeetingServices {
         if(MeetingDataHandler.addMeeting(meeting)) {
             if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {
                 MeetingDataHandler.setMeetingStatus(meeting);
+                return meeting;
             }
-            return meeting;
+            return null;
         }
         else {
             return null;
