@@ -29,7 +29,6 @@ public class Listener implements ServletContextListener,
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new PeriodRoomCheck(), 1, 1, TimeUnit.MINUTES);
     }

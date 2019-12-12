@@ -6,15 +6,15 @@ import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
 public class EmailService {
-    private static final String USERNAME = "";
-    private static final String PASSWORD = "";
-    private static final String EMAIL_FROM = "From@gmail.com";
+    private static final String USERNAME = "jalas.jugger@outlook.com";
+    private static final String PASSWORD = "jalasjalas123";
+    private static final String EMAIL_FROM = "jalas.jugger@outlook.com";
     private static final String EMAIL_SUBJECT = "Jalas new notification";
 
     public static void sendMail(String receiverAddress, String content) {
 
         Properties prop = new Properties();
-        prop.put("mail.smtp.host", "smtp.gmail.com");
+        prop.put("mail.smtp.host", "outlook.office365.com");
         prop.put("mail.smtp.port", "587");
         prop.put("mail.smtp.auth", "true");
         prop.put("mail.smtp.starttls.enable", "true"); //TLS
