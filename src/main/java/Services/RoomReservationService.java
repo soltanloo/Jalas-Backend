@@ -1,5 +1,6 @@
 package Services;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.net.URI;
 
@@ -21,6 +22,7 @@ public class RoomReservationService {
                 .GET()
                 .uri(URI.create(uri))
                 .setHeader("User-Agent", "Jalas Juggernaut group client")
+                .timeout(Duration.ofSeconds(5))
                 .build();
 
         HttpResponse<String> response = null;
@@ -28,6 +30,7 @@ public class RoomReservationService {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
 
         if(response.statusCode() != 200) {
@@ -59,6 +62,7 @@ public class RoomReservationService {
                 .uri(URI.create(uri))
                 .header("Content-Type", "application/json;charset=UTF-8")
                 .setHeader("User-Agent", "Jalas Juggernaut group client")
+                .timeout(Duration.ofSeconds(5))
                 .build();
 
         HttpResponse<String> response = null;
