@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class PollDataHandler {
     private static Connection con = null;
 
-    private static final String COLUMNS = "(id, title, options)";
+    private static final String COLUMNS = "(id, title, options, isOngoing)";
 
     public static void init() {
         try {
@@ -30,7 +30,8 @@ public class PollDataHandler {
                     "Poll " +
                     "(id INTEGER PRIMARY KEY," +
                     "title TEXT , " +
-                    "options TEXT)";
+                    "options TEXT, " +
+                    "isOngoing INTEGER)";
             st.executeUpdate(sql);
 
             st.close();
@@ -41,7 +42,7 @@ public class PollDataHandler {
     }
 
     public static boolean addPoll(Poll poll) {
-        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?)";
+        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?)";
 
         try{
             con = DataBaseConnector.getConnection();
@@ -111,11 +112,35 @@ public class PollDataHandler {
         return null;
     }
 
+    public static boolean setOngoingStatus(int id) {
+        String sql = "UPDATE Poll SET isOngoing = ? where id = ?";
+
+        try {
+            con = DataBaseConnector.getConnection();
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, 0);
+            stmt.setInt(2, id);
+
+            stmt.executeUpdate();
+            stmt.close();
+            con.close();
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public static void pollDomainToDB(Poll poll,  PreparedStatement st) {
         try {
             st.setInt(1, poll.getId());
             st.setString(2, poll.getTitle());
             st.setString(3, DataHelpers.stringify(poll.getOptionsIDs()));
+            if (poll.isOngoing())
+                st.setInt(4, 1);
+            else
+                st.setInt(4, 0);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -133,6 +158,7 @@ public class PollDataHandler {
 
             }
             poll.setOptions(pollOptions);
+            poll.setOngoing(rs.getInt("isOngoing") == 1);
             return poll;
         } catch(SQLException e) {
             e.printStackTrace();
@@ -157,6 +183,7 @@ public class PollDataHandler {
                 pollOptions.add(pollOption);
             }
             poll.setOptions(pollOptions);
+            poll.setOngoing(jPoll.getInt("isOngoing") == 1);
 
             addPoll(poll);
         }

@@ -9,6 +9,16 @@ public class Poll {
     private int id;
     private String title;
     private ArrayList<PollOption> options;
+    private boolean isOngoing;
+
+
+    public boolean isOngoing() {
+        return isOngoing;
+    }
+
+    public void setOngoing(boolean ongoing) {
+        isOngoing = ongoing;
+    }
 
     public ArrayList<PollOption> getOptions() {
         return options;

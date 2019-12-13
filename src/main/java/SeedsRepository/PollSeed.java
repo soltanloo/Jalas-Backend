@@ -6,6 +6,7 @@ public class PollSeed {
             "    {\n" +
             "      \"id\": 0,\n" +
             "      \"title\": \"Socorro\",\n" +
+            "      \"isOngoing\": 1,\n" +
             "      \"options\": [\n" +
             "        {\n" +
             "          \"id\": 0,\n" +
@@ -60,6 +61,7 @@ public class PollSeed {
             "    {\n" +
             "      \"id\": 1,\n" +
             "      \"title\": \"Stout\",\n" +
+            "      \"isOngoing\": 1,\n" +
             "      \"options\": [\n" +
             "        {\n" +
             "          \"id\": 8,\n" +
@@ -102,6 +104,7 @@ public class PollSeed {
             "    {\n" +
             "      \"id\": 2,\n" +
             "      \"title\": \"Violet\",\n" +
+            "      \"isOngoing\": 1,\n" +
             "      \"options\": [\n" +
             "        {\n" +
             "          \"id\": 20,\n" +
@@ -138,6 +141,7 @@ public class PollSeed {
             "    {\n" +
             "      \"id\": 3,\n" +
             "      \"title\": \"Nora\",\n" +
+            "      \"isOngoing\": 1,\n" +
             "      \"options\": [\n" +
             "        {\n" +
             "          \"id\": 30,\n" +
@@ -180,6 +184,7 @@ public class PollSeed {
             "    {\n" +
             "      \"id\": 4,\n" +
             "      \"title\": \"Rollins\",\n" +
+            "      \"isOngoing\": 1,\n" +
             "      \"options\": [\n" +
             "        {\n" +
             "          \"id\": 40,\n" +
@@ -222,6 +227,7 @@ public class PollSeed {
             "    {\n" +
             "      \"id\": 5,\n" +
             "      \"title\": \"Eliza\",\n" +
+            "      \"isOngoing\": 1,\n" +
             "      \"options\": [\n" +
             "        {\n" +
             "          \"id\": 50,\n" +
@@ -270,6 +276,7 @@ public class PollSeed {
             "    {\n" +
             "      \"id\": 6,\n" +
             "      \"title\": \"Mullen\",\n" +
+            "      \"isOngoing\": 1,\n" +
             "      \"options\": [\n" +
             "        {\n" +
             "          \"id\": 60,\n" +
