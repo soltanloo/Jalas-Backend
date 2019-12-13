@@ -1,6 +1,8 @@
 package BusinessLogic;
 
 import DataManagers.MeetingDataHandler;
+import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
 import Services.RoomReservationService;
 import org.json.JSONException;
@@ -12,7 +14,7 @@ public class MeetingServices {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
-    public static Meeting addMeeting(JSONObject data) throws JSONException {
+    public static Meeting addMeeting(JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
         Meeting meeting = new Meeting();
 
@@ -26,14 +28,18 @@ public class MeetingServices {
                 MeetingDataHandler.setMeetingStatus(meeting);
                 return meeting;
             }
-            return null;
+            throw new RoomReservationErrorException();
         }
         else {
-            return null;
+            throw new DataBaseErrorException();
         }
     }
 
-    public static boolean cancelMeeting(int meetingId) {
-        return MeetingDataHandler.cancelMeeting(meetingId);
+    public static boolean cancelMeeting(String meetingId) {
+        return MeetingDataHandler.cancelMeeting(Integer.parseInt(meetingId));
+    }
+
+    public static Meeting getMeeting(String id) throws DataBaseErrorException {
+        return MeetingDataHandler.getMeeting(Integer.parseInt(id));
     }
 }

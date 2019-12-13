@@ -12,7 +12,7 @@ import java.util.ArrayList;
 @RestController
 public class PollsController {
     @RequestMapping (value = "/api/poll", method = RequestMethod.GET)
-    public ResponseEntity getRooms (HttpServletRequest req) {
+    public ResponseEntity getPolls (HttpServletRequest req) {
 
         ArrayList<Poll> polls = PollServices.getAllPolls();
         if (polls != null)
@@ -23,7 +23,7 @@ public class PollsController {
     }
 
     @RequestMapping (value = "/api/poll/{id}", method = RequestMethod.GET)
-    public ResponseEntity getProject (HttpServletRequest req, @PathVariable String id) {
+    public ResponseEntity getPoll (HttpServletRequest req, @PathVariable String id) {
 
         Poll poll = PollServices.getPoll(Integer.parseInt(id));
         if (poll != null)

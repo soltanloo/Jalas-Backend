@@ -1,5 +1,6 @@
 package DataManagers;
 
+import ErrorClasses.DataBaseErrorException;
 import Models.Meeting;
 
 import java.sql.*;
@@ -56,7 +57,7 @@ public class MeetingDataHandler {
         return true;
     }
 
-    public static Meeting getMeeting (Integer id) {
+    public static Meeting getMeeting (Integer id) throws DataBaseErrorException {
         String sql = "SELECT * FROM Meeting WHERE id = ?";
         try {
             Meeting meeting = null;
@@ -77,8 +78,8 @@ public class MeetingDataHandler {
             return meeting;
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new DataBaseErrorException();
         }
-        return null;
     }
 
     public static void setMeetingStatus(Meeting meeting) {
