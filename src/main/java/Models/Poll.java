@@ -10,7 +10,25 @@ public class Poll {
     private String title;
     private ArrayList<PollOption> options;
     private boolean isOngoing;
+    private int ownerId;
+    private ArrayList<Integer> invitedUserIds = new ArrayList<>();
 
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public ArrayList<Integer> getInvitedUserIds() {
+        return invitedUserIds;
+    }
+
+    public void setInvitedUserIds(ArrayList<Integer> invitedUserIds) {
+        this.invitedUserIds = invitedUserIds;
+    }
 
     public boolean isOngoing() {
         return isOngoing;
@@ -52,11 +70,11 @@ public class Poll {
         this.id = id;
     }
 
-    public ArrayList<String> getOptionsIDs() {
-        ArrayList<String> retList = new ArrayList<>();
+    public ArrayList<Integer> getOptionsIDs() {
+        ArrayList<Integer> retList = new ArrayList<>();
 
         for(PollOption pollOption : this.options) {
-            retList.add(Integer.toString(pollOption.getId()));
+            retList.add(pollOption.getId());
         }
         return retList;
     }

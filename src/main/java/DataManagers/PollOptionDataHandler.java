@@ -1,14 +1,9 @@
 package DataManagers;
 
+import ErrorClasses.DataBaseErrorException;
 import Models.PollOption;
 import java.sql.*;
 
-
-/*
-    private int id;
-    private ArrayList<String> userList = new ArrayList<>();
-    private String timeOption;
- */
 public class PollOptionDataHandler {
     private static Connection con = null;
 
@@ -53,7 +48,7 @@ public class PollOptionDataHandler {
         return true;
     }
 
-    public static PollOption getPollOption(int id) {
+    public static PollOption getPollOption(int id) throws DataBaseErrorException {
         String sql = "SELECT * FROM PollOption WHERE id = ?";
 
         try {
@@ -74,11 +69,11 @@ public class PollOptionDataHandler {
             return option;
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new DataBaseErrorException();
         }
-        return null;
     }
 
-    public static boolean updateUserIDList(PollOption pollOption) {
+    public static boolean updateUserIDList(PollOption pollOption) throws DataBaseErrorException {
         String sql = "UPDATE PollOption SET userList = ? where id = ?";
 
         try {
@@ -92,8 +87,8 @@ public class PollOptionDataHandler {
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new DataBaseErrorException();
         }
-        return true;
     }
 
     public static void PollOptionDomainToDB(PollOption option,  PreparedStatement st) {

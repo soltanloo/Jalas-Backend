@@ -28,7 +28,7 @@ public class MeetingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in reserving room");
         } catch (JSONException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in parsing the JSON");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing the JSON");
         } catch (DataBaseErrorException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");

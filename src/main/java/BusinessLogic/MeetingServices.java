@@ -4,6 +4,7 @@ import DataManagers.MeetingDataHandler;
 import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
+import Models.Poll;
 import Services.RoomReservationService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,13 +15,19 @@ public class MeetingServices {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
-    public static Meeting addMeeting(JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException {
+    public static Meeting  addMeeting(JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
+        Poll poll = PollServices.getPoll(data.getInt("pollId"));
+        PollServices.unsetOngoingStatus(poll);
+
         Meeting meeting = new Meeting();
 
         meeting.setRoomNumber(data.getInt("roomNumber"));
         meeting.setStartTime(data.getString("startTime"));
         meeting.setFinishTime(data.getString("finishTime"));
+        meeting.setOwnerId(poll.getOwnerId());
+        meeting.setInvitedUserIds(poll.getInvitedUserIds());
         meeting.setCreateTime(sdf.format(timestamp));
 
         if(MeetingDataHandler.addMeeting(meeting)) {

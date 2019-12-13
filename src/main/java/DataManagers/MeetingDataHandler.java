@@ -7,12 +7,22 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+
+
+//private int id;
+//private int roomNumber;
+//private String startTime;
+//private String finishTime;
+//private String createTime;
+//private String setTime;
+//private int ownerId;
+//private ArrayList<Integer> invitedUserIds = new ArrayList<>();
+
 
 public class MeetingDataHandler {
     private static Connection con = null;
 
-    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status, createTime, setTime)";
+    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status, createTime, setTime, ownerId, invitedUserIds)";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     public static void init() {
@@ -29,7 +39,9 @@ public class MeetingDataHandler {
                     "finishTime TEXT, " +
                     "status INTEGER, " +
                     "createTime TEXT, " +
-                    "setTime TEXT)";
+                    "setTime TEXT, " +
+                    "ownerId INTEGER, " +
+                    "invitedUserIds TEXT)";
             st.executeUpdate(sql);
 
             st.close();
@@ -40,7 +52,7 @@ public class MeetingDataHandler {
     }
 
     public static boolean addMeeting(Meeting meeting) {
-        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try{
             con = DataBaseConnector.getConnection();
@@ -66,8 +78,7 @@ public class MeetingDataHandler {
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                if (rs.getString(1).equals(id))
-                    meeting = meetingDBtoDomain(rs);
+                meeting = meetingDBtoDomain(rs);
             }
             if (meeting == null)
                 return null;
@@ -235,6 +246,8 @@ public class MeetingDataHandler {
             st.setInt(5, meeting.getStatus().getLevelCode());
             st.setString(6, meeting.getCreateTime());
             st.setString(7, meeting.getSetTime());
+            st.setInt(8, meeting.getOwnerId());
+            st.setString(9, DataHelpers.stringify(meeting.getInvitedUserIds()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -250,6 +263,8 @@ public class MeetingDataHandler {
             meeting.setStatus(rs.getInt("status"));
             meeting.setCreateTime(rs.getString("createTime"));
             meeting.setSetTime(rs.getString("setTime"));
+            meeting.setOwnerId(rs.getInt("ownerId"));
+            meeting.setInvitedUserIds(DataHelpers.makeList(rs.getString("invitedUserIds")));
         } catch(SQLException e) {
             e.printStackTrace();
         }

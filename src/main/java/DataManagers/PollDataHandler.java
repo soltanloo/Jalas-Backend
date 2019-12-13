@@ -1,5 +1,6 @@
 package DataManagers;
 
+import ErrorClasses.DataBaseErrorException;
 import Models.Poll;
 import Models.PollOption;
 import org.json.JSONArray;
@@ -13,12 +14,14 @@ import java.util.ArrayList;
     private int id;
     private String title;
     private ArrayList<PollOption> options;
+    private int ownerId;
+    private ArrayList<Integer> invitedUserIds = new ArrayList<>();
  */
 
 public class PollDataHandler {
     private static Connection con = null;
 
-    private static final String COLUMNS = "(id, title, options, isOngoing)";
+    private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds)";
 
     public static void init() {
         try {
@@ -28,10 +31,12 @@ public class PollDataHandler {
 
             String sql = "CREATE TABLE " +
                     "Poll " +
-                    "(id INTEGER PRIMARY KEY," +
-                    "title TEXT , " +
+                    "(id INTEGER PRIMARY KEY, " +
+                    "title TEXT, " +
                     "options TEXT, " +
-                    "isOngoing INTEGER)";
+                    "isOngoing INTEGER, " +
+                    "ownerId INTEGER, " +
+                    "invitedUserIds TEXT)";
             st.executeUpdate(sql);
 
             st.close();
@@ -42,7 +47,7 @@ public class PollDataHandler {
     }
 
     public static boolean addPoll(Poll poll) {
-        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?)";
 
         try{
             con = DataBaseConnector.getConnection();
@@ -62,7 +67,7 @@ public class PollDataHandler {
         return true;
     }
 
-    public static ArrayList<Poll> getAllPols() {
+    public static ArrayList<Poll> getAllPols() throws DataBaseErrorException {
         String sql = "SELECT * FROM Poll";
 
         ArrayList<Poll> polls = new ArrayList<>();
@@ -85,7 +90,7 @@ public class PollDataHandler {
         return null;
     }
 
-    public static Poll getPoll(int id) {
+    public static Poll getPoll(int id) throws DataBaseErrorException {
         String sql = "SELECT * FROM Poll WHERE id = ?";
 
         try {
@@ -112,7 +117,7 @@ public class PollDataHandler {
         return null;
     }
 
-    public static boolean setOngoingStatus(int id) {
+    public static void unsetOngoingStatus(int id) throws DataBaseErrorException {
         String sql = "UPDATE Poll SET isOngoing = ? where id = ?";
 
         try {
@@ -124,10 +129,9 @@ public class PollDataHandler {
             stmt.executeUpdate();
             stmt.close();
             con.close();
-            return true;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false;
+            throw new DataBaseErrorException();
         }
     }
 
@@ -140,25 +144,28 @@ public class PollDataHandler {
                 st.setInt(4, 1);
             else
                 st.setInt(4, 0);
-
+            st.setInt(5, poll.getOwnerId());
+            st.setString(6, DataHelpers.stringify(poll.getInvitedUserIds()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static Poll pollDBtoDomain(ResultSet rs) {
+    public static Poll pollDBtoDomain(ResultSet rs) throws DataBaseErrorException {
         try {
             Poll poll = new Poll();
             poll.setId(rs.getInt("id"));
             poll.setTitle(rs.getString("title"));
             ArrayList<PollOption> pollOptions = new ArrayList<>();
             String userList = rs.getString("options");
-            for(String id : DataHelpers.makeList(userList)) {
-                pollOptions.add(PollOptionDataHandler.getPollOption(Integer.parseInt(id)));
+            for(int id : DataHelpers.makeList(userList)) {
+                pollOptions.add(PollOptionDataHandler.getPollOption(id));
 
             }
             poll.setOptions(pollOptions);
             poll.setOngoing(rs.getInt("isOngoing") == 1);
+            poll.setOwnerId(rs.getInt("ownerId"));
+            poll.setInvitedUserIds(DataHelpers.makeList(rs.getString("invitedUserIds")));
             return poll;
         } catch(SQLException e) {
             e.printStackTrace();
@@ -184,6 +191,8 @@ public class PollDataHandler {
             }
             poll.setOptions(pollOptions);
             poll.setOngoing(jPoll.getInt("isOngoing") == 1);
+            poll.setOwnerId(jPoll.getInt("ownerId"));
+            poll.setInvitedUserIds(DataHelpers.makeList(jPoll.getString("invitedUserIds")));
 
             addPoll(poll);
         }

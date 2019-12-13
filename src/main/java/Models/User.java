@@ -9,20 +9,54 @@ public class User {
     private String firstName;
     private String lastName;
     private String email;
-    private List<Integer> meetingIds;
+    private List<Integer> createdPollIds = new ArrayList<>();
+    private List<Integer> invitedPollIds = new ArrayList<>();
+    private List<Integer> createdMeetingIds = new ArrayList<>();
+    private List<Integer> invitedMeetingIds = new ArrayList<>();
 
 
-    public List<Integer> getMeetingIds() {
-        return meetingIds;
+    public List<Integer> getCreatedPollIds() {
+        return createdPollIds;
     }
 
-    public void setMeetingIds(List<Integer> meetingIds) {
-        this.meetingIds = meetingIds;
+    public void setCreatedPollIds(List<Integer> createdPollIds) {
+        this.createdPollIds = createdPollIds;
     }
 
-    public void addMeeting(Integer meetingId) {
-        this.meetingIds.add(meetingId);
+    public void addCreatedPollId(int pollId) {createdPollIds.add(pollId);}
+
+
+    public List<Integer> getInvitedPollIds() {
+        return invitedPollIds;
     }
+
+    public void setInvitedPollIds(List<Integer> invitedPollIds) {
+        this.invitedPollIds = invitedPollIds;
+    }
+
+    public void addInvitedPollId(int pollId) {invitedPollIds.add(pollId);}
+
+
+    public List<Integer> getCreatedMeetingIds() {
+        return createdMeetingIds;
+    }
+
+    public void setCreatedMeetingIds(List<Integer> createdMeetingIds) {
+        this.createdMeetingIds = createdMeetingIds;
+    }
+
+    public void addCreatedMeetingId(int meetingId) {createdMeetingIds.add(meetingId);}
+
+
+    public List<Integer> getInvitedMeetingIds() {
+        return invitedMeetingIds;
+    }
+
+    public void setInvitedMeetingIds(List<Integer> meetingIds) {
+        this.invitedMeetingIds = meetingIds;
+    }
+
+    public void addInvitedMeetingId(int meetingId) {invitedMeetingIds.add(meetingId);}
 
     public String getFirstName() {
         return firstName;

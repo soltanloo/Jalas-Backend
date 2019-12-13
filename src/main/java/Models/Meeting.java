@@ -1,6 +1,7 @@
 package Models;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Meeting {
@@ -12,6 +13,8 @@ public class Meeting {
     private String finishTime;
     private String createTime;
     private String setTime;
+    private int ownerId;
+    private ArrayList<Integer> invitedUserIds = new ArrayList<>();
 
     public enum Status {
         STALLED  (0),  //calls constructor with value 3
@@ -41,6 +44,24 @@ public class Meeting {
         this.id = count++;
         this.status = Status.STALLED;
     }
+
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public ArrayList<Integer> getInvitedUserIds() {
+        return invitedUserIds;
+    }
+
+    public void setInvitedUserIds(ArrayList<Integer> invitedUserIds) {
+        this.invitedUserIds = invitedUserIds;
+    }
+
     public Status getStatus(){
         return status;
     }

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class PollOption {
     private static int count = 0;
     private int id;
-    private ArrayList<String> userList = new ArrayList<>();
+    private ArrayList<Integer> userList = new ArrayList<>();
     private String startTime;
     private String finishTime;
 
@@ -24,12 +24,16 @@ public class PollOption {
         this.id = id;
     }
 
-    public ArrayList<String> getUserList() {
+    public ArrayList<Integer> getUserList() {
         return userList;
     }
 
-    public void setUserList(ArrayList<String> userList) {
+    public void setUserList(ArrayList<Integer> userList) {
         this.userList = userList;
+    }
+
+    public void addVote(int userID) {
+        this.userList.add(userID);
     }
 
     public String getStartTime() {

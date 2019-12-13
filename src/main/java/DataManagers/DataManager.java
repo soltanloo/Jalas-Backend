@@ -19,7 +19,8 @@ public class DataManager {
         MeetingDataHandler.init();
         PollDataHandler.init();
         PollOptionDataHandler.init();
-        DataManager.addSeedPolls();
+        UserDataHandler.init();
+        //DataManager.addSeedPolls();
     }
 
     private static void addSeedPolls () throws JSONException, IOException{
