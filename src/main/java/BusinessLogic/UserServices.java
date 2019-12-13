@@ -28,4 +28,8 @@ public class UserServices {
         user.addInvitedMeetingId(meetingId);
         UserDataHandler.updateInvitedMeetingIds(user);
     }
+
+    public static User getUser(int id) throws DataBaseErrorException {
+        return UserDataHandler.getUser(id);
+    }
 }

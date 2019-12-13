@@ -5,6 +5,7 @@ import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
 import Models.Poll;
+import Models.User;
 import Services.RoomReservationService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -19,7 +20,6 @@ public class MeetingServices {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         Poll poll = PollServices.getPoll(data.getInt("pollId"));
-        PollServices.unsetOngoingStatus(poll);
 
         Meeting meeting = new Meeting();
 
@@ -30,7 +30,11 @@ public class MeetingServices {
         meeting.setInvitedUserIds(poll.getInvitedUserIds());
         meeting.setCreateTime(sdf.format(timestamp));
 
+
         if(MeetingDataHandler.addMeeting(meeting)) {
+            UserServices.addUserCreatedMeeting(poll.getOwnerId(), meeting.getId());
+            PollServices.unsetOngoingStatus(poll);
+
             if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {
                 MeetingDataHandler.setMeetingStatus(meeting);
                 return meeting;
