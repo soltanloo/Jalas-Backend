@@ -10,7 +10,6 @@ public class Poll {
     private String title;
     private ArrayList<PollOption> options;
 
-
     public ArrayList<PollOption> getOptions() {
         return options;
     }
