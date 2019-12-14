@@ -22,6 +22,7 @@ public class DataManager {
         PollDataHandler.init();
         PollOptionDataHandler.init();
         UserDataHandler.init();
+        addSeedUsers();
         //DataManager.addSeedPolls();
     }
 

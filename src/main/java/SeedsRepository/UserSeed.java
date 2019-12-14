@@ -3,7 +3,7 @@ package SeedsRepository;
 public class UserSeed {
     public static String userList = "{ \"users\" : [\n" +
             "    {\n" +
-            "        \"_id\": \"5df4637448653b2b2a783fde\",\n" +
+            "        \"id\": \"810195410\",\n" +
             "            \"firstName\": \"Lilia\",\n" +
             "            \"lastName\": \"Mccall\",\n" +
             "            \"email\": \"chrystalmcleod@zenolux.com\",\n" +
@@ -35,7 +35,7 @@ public class UserSeed {
             "    ]\n" +
             "    },\n" +
             "    {\n" +
-            "        \"_id\": \"5df463741c73d1242a32b5ea\",\n" +
+            "        \"id\": \"810195411\",\n" +
             "            \"firstName\": \"Moreno\",\n" +
             "            \"lastName\": \"Avila\",\n" +
             "            \"email\": \"huffphelps@pharmacon.com\",\n" +
@@ -85,7 +85,7 @@ public class UserSeed {
             "    ]\n" +
             "    },\n" +
             "    {\n" +
-            "        \"_id\": \"5df46374decf61cb3288f832\",\n" +
+            "        \"id\": \"810195412\",\n" +
             "            \"firstName\": \"Luisa\",\n" +
             "            \"lastName\": \"Richardson\",\n" +
             "            \"email\": \"mariannesims@comtrail.com\",\n" +
@@ -126,7 +126,7 @@ public class UserSeed {
             "    ]\n" +
             "    },\n" +
             "    {\n" +
-            "        \"_id\": \"5df4637421c0e7873d4edbe4\",\n" +
+            "        \"id\": \"810195415\",\n" +
             "            \"firstName\": \"Iva\",\n" +
             "            \"lastName\": \"Gonzalez\",\n" +
             "            \"email\": \"greershaw@kozgene.com\",\n" +
@@ -157,6 +157,6 @@ public class UserSeed {
             "        }\n" +
             "    ]\n" +
             "    }\n" +
-            "    }\n" +
-            "]}";
+            "]\n" +
+            "}";
 }

@@ -192,7 +192,6 @@ public class UserDataHandler {
         for(int i = 0; i < userJList.length(); i++) {
             JSONObject jUser = userJList.getJSONObject(i);
             User user = new User();
-
             user.setId(jUser.getInt("id"));
             user.setFirstName(jUser.getString("firstName"));
             user.setLastName(jUser.getString("lastName"));
