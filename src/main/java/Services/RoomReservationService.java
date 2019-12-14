@@ -17,7 +17,7 @@ public class RoomReservationService {
             .build();
 
     public static ArrayList<Integer> getFreeRooms(String startTime, String endTime) {
-        String uri = "http://213.233.176.40/available_rooms" + "?start=" + startTime + "&end=" + endTime;
+        String uri = "http://reserve.utse.ir/available_rooms" + "?start=" + startTime + "&end=" + endTime;
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(uri))
@@ -56,7 +56,7 @@ public class RoomReservationService {
     }
 
     public static boolean reserveRoom(Integer roomNumber, String userName, String startTime, String endTime) {
-        String uri = "http://213.233.176.40/rooms/" + roomNumber + "/reserve";
+        String uri = "http://reserve.utse.ir/rooms/" + roomNumber + "/reserve";
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(buildFormData(userName, startTime, endTime))
                 .uri(URI.create(uri))
@@ -70,6 +70,7 @@ public class RoomReservationService {
             response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
 
         if(response.statusCode() != 200) {
