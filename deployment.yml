@@ -10,7 +10,7 @@ spec:
         app: se_project_be
     spec:
       containers:
-        - name: se_project-_be
+        - name: se_project_be
           image: registry.gitlab.com/RastinS/se_project_be
           imagePullPolicy: Always
           ports:
