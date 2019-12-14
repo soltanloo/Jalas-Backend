@@ -3,12 +3,14 @@ package BusinessLogic;
 import DataManagers.PollDataHandler;
 import DataManagers.PollOptionDataHandler;
 import DataManagers.UserDataHandler;
+import ErrorClasses.AccessViolationException;
 import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.ObjectNotFoundInDBException;
 import Models.Poll;
 import Models.PollOption;
 import Models.User;
 import Services.EmailService;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,27 +38,52 @@ public class PollServices {
         PollOptionDataHandler.updateUserIDList(option);
     }
 
-    public static void addParticipant(JSONObject data) throws JSONException, DataBaseErrorException {
+    public static void addParticipant(JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
         String userEmail = data.getString("userEmail");
         int pollId = data.getInt("pollId");
-        int userId = data.getInt("userId");
-        User user = UserDataHandler.getUser(userId);
+        int ownerId = data.getInt("userId");
+        User owner = UserDataHandler.getUser(ownerId);
+        User user = UserDataHandler.getUserByEmail(userEmail);
         Poll poll = PollDataHandler.getPoll(pollId);
-        poll.addInvitedUser(userId);
+
+        if (owner == null || user == null || poll == null)
+            throw new DataBaseErrorException();
+
+        if (!owner.didCreatedPoll(poll.getId()))
+            throw new AccessViolationException();
+
+        poll.addInvitedUser(user.getId());
+        PollDataHandler.updateInvitedIds(poll);
+
         String content = "/api/poll" + pollId;
         EmailService.sendMail(userEmail,content);
+
+        user.addInvitedPollId(poll.getId());
         UserDataHandler.updateInvitedPollIds(user);
 
     }
-    public static void createPoll(JSONObject data) throws JSONException, DataBaseErrorException{
+    public static void createPoll(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException {
         int userID = data.getInt("userID");
         User user = UserDataHandler.getUser(userID);
+        if (user == null) {
+            throw new ObjectNotFoundInDBException();
+        }
         Poll poll = new Poll();
         poll.setTitle(data.getString("title"));
         poll.setOngoing(true);
         poll.setOwnerId(userID);
-        if(PollDataHandler.addPoll(poll) == false)
+
+        ArrayList<PollOption> options = new ArrayList<>();
+        JSONArray jOptions = data.getJSONArray("options");
+        for(int i = 0; i < jOptions.length(); i++) {
+            JSONObject jOption = jOptions.getJSONObject(i);
+            options.add(new PollOption(jOption.getString("startTime"), jOption.getString("finishTime")));
+        }
+        poll.setOptions(options);
+
+        if(!PollDataHandler.addPoll(poll))
             throw new DataBaseErrorException();
+        user.addCreatedPollId(poll.getId());
         UserDataHandler.updateCreatedPollIds(user);
     }
 

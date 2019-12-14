@@ -1,6 +1,7 @@
 package DataManagers;
 
 import SeedsRepository.PollSeed;
+import SeedsRepository.UserSeed;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,10 +25,15 @@ public class DataManager {
         //DataManager.addSeedPolls();
     }
 
-    private static void addSeedPolls () throws JSONException, IOException{
+    private static void addSeedPolls () throws JSONException{
 
         JSONObject file = new JSONObject(PollSeed.pollSeed);
         PollDataHandler.createSeedPolls(file.getJSONArray("polls"));
+    }
+
+    private static void addSeedUsers () throws Exception {
+        JSONObject file = new JSONObject(UserSeed.userList);
+        UserDataHandler.createSeedUsers(file.getJSONArray("users"));
     }
 
     public static void dropExistingTable (String tableName) {

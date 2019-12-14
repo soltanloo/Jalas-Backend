@@ -90,4 +90,12 @@ public class User {
         this.id = id;
     }
 
+    public boolean didCreatedPoll(int pollId) {
+        for (int i = 0; i < createdPollIds.size(); i++) {
+            if (pollId == createdPollIds.get(i))
+                return true;
+        }
+        return false;
+    }
+
 }

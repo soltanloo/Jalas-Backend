@@ -1,162 +1,162 @@
 package SeedsRepository;
 
 public class UserSeed {
-/*[
-    {
-        "_id": "5df4637448653b2b2a783fde",
-            "firstName": "Lilia",
-            "lastName": "Mccall",
-            "email": "chrystalmcleod@zenolux.com",
-            "createdPollIds": [
-        {
-            "id": 0
-        },
-        {
-            "id": 1
-        },
-        {
-            "id": 2
-        }
-    ],
-        "invitedPollIds": [
-    ],
-        "createdMeetingIds": [
-        {
-            "id": 0
-        },
-        {
-            "id": 1
-        },
-        {
-            "id": 2
-        }
-    ],
-        "invitedMeetingIds": [
-    ]
-    },
-    {
-        "_id": "5df463741c73d1242a32b5ea",
-            "firstName": "Moreno",
-            "lastName": "Avila",
-            "email": "huffphelps@pharmacon.com",
-            "createdPollIds": [
-        {
-            "id": 3
-        },
-        {
-            "id": 4
-        },
-        {
-            "id": 5
-        }
-    ],
-        "invitedPollIds": [
-        {
-            "id": 0
-        },
-        {
-            "id": 1
-        },
-        {
-            "id": 2
-        }
-    ],
-        "createdMeetingIds": [
-        {
-            "id": 3
-        },
-        {
-            "id": 4
-        },
-        {
-            "id": 5
-        }
-    ],
-        "invitedMeetingIds": [
-        {
-            "id": 3
-        },
-        {
-            "id": 4
-        },
-        {
-            "id": 5
-        }
-    ]
-    },
-    {
-        "_id": "5df46374decf61cb3288f832",
-            "firstName": "Luisa",
-            "lastName": "Richardson",
-            "email": "mariannesims@comtrail.com",
-            "createdPollIds": [
-        {
-            "id": 6
-        },
-        {
-            "id": 7
-        },
-    ],
-        "invitedPollIds": [
-        {
-            "id": 0
-        },
-        {
-            "id": 1
-        },
-        {
-            "id": 3
-        }
-    ],
-        "createdMeetingIds": [
-        {
-            "id": 6
-        },
-    ],
-        "invitedMeetingIds": [
-        {
-            "id": 0
-        },
-        {
-            "id": 4
-        },
-        {
-            "id": 5
-        }
-    ]
-    },
-    {
-        "_id": "5df4637421c0e7873d4edbe4",
-            "firstName": "Iva",
-            "lastName": "Gonzalez",
-            "email": "greershaw@kozgene.com",
-            "createdPollIds": [
-    ],
-        "invitedPollIds": [
-        {
-            "id": 3
-        },
-        {
-            "id": 4
-        },
-        {
-            "id": 5
-        }
-    ],
-        "createdMeetingIds": [
-    ],
-        "invitedMeetingIds": [
-        {
-            "id": 0
-        },
-        {
-            "id": 1
-        },
-        {
-            "id": 6
-        }
-    ]
-    }
-    }
-]*/
+    public static String userList = "{ \"users\" : [\n" +
+            "    {\n" +
+            "        \"_id\": \"5df4637448653b2b2a783fde\",\n" +
+            "            \"firstName\": \"Lilia\",\n" +
+            "            \"lastName\": \"Mccall\",\n" +
+            "            \"email\": \"chrystalmcleod@zenolux.com\",\n" +
+            "            \"createdPollIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 0\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 1\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 2\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"invitedPollIds\": [\n" +
+            "    ],\n" +
+            "        \"createdMeetingIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 0\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 1\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 2\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"invitedMeetingIds\": [\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"_id\": \"5df463741c73d1242a32b5ea\",\n" +
+            "            \"firstName\": \"Moreno\",\n" +
+            "            \"lastName\": \"Avila\",\n" +
+            "            \"email\": \"huffphelps@pharmacon.com\",\n" +
+            "            \"createdPollIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 3\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 4\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 5\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"invitedPollIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 0\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 1\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 2\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"createdMeetingIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 3\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 4\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 5\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"invitedMeetingIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 3\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 4\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 5\n" +
+            "        }\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"_id\": \"5df46374decf61cb3288f832\",\n" +
+            "            \"firstName\": \"Luisa\",\n" +
+            "            \"lastName\": \"Richardson\",\n" +
+            "            \"email\": \"mariannesims@comtrail.com\",\n" +
+            "            \"createdPollIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 6\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 7\n" +
+            "        },\n" +
+            "    ],\n" +
+            "        \"invitedPollIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 0\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 1\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 3\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"createdMeetingIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 6\n" +
+            "        },\n" +
+            "    ],\n" +
+            "        \"invitedMeetingIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 0\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 4\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 5\n" +
+            "        }\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    {\n" +
+            "        \"_id\": \"5df4637421c0e7873d4edbe4\",\n" +
+            "            \"firstName\": \"Iva\",\n" +
+            "            \"lastName\": \"Gonzalez\",\n" +
+            "            \"email\": \"greershaw@kozgene.com\",\n" +
+            "            \"createdPollIds\": [\n" +
+            "    ],\n" +
+            "        \"invitedPollIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 3\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 4\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 5\n" +
+            "        }\n" +
+            "    ],\n" +
+            "        \"createdMeetingIds\": [\n" +
+            "    ],\n" +
+            "        \"invitedMeetingIds\": [\n" +
+            "        {\n" +
+            "            \"id\": 0\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 1\n" +
+            "        },\n" +
+            "        {\n" +
+            "            \"id\": 6\n" +
+            "        }\n" +
+            "    ]\n" +
+            "    }\n" +
+            "    }\n" +
+            "]}";
 }

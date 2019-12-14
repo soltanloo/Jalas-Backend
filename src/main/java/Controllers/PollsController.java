@@ -1,6 +1,7 @@
 package Controllers;
 
 import BusinessLogic.PollServices;
+import ErrorClasses.AccessViolationException;
 import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.ObjectNotFoundInDBException;
 import Models.Poll;
@@ -52,13 +53,16 @@ public class PollsController {
         try {
             JSONObject data = new JSONObject(reqData);
             PollServices.createPoll(data);
-            return ResponseEntity.ok("Vote added");
+            return ResponseEntity.ok("Poll created");
         } catch (JSONException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");
         } catch (DataBaseErrorException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (ObjectNotFoundInDBException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No user with this userID");
         }
     }
 
@@ -74,6 +78,9 @@ public class PollsController {
         } catch (DataBaseErrorException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sent owner ID does not match poll's owner ID");
         }
     }
 

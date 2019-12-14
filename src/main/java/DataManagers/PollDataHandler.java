@@ -115,13 +115,30 @@ public class PollDataHandler {
     }
 
     public static void unsetOngoingStatus(int id) throws DataBaseErrorException {
-        String sql = "UPDATE Poll SET isOngoing = ? where id = ?";
+        String sql = "UPDATE Poll SET isOngoing = ? WHERE id = ?";
         Connection con = DataBaseConnector.getConnection();
         try {
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, 0);
             stmt.setInt(2, id);
 
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
+    public static void updateInvitedIds(Poll poll) throws DataBaseErrorException {
+        String sql = "UPDATE Poll SET invitedUserIds = ? WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, DataHelpers.stringify(poll.getInvitedUserIds()));
             stmt.executeUpdate();
             stmt.close();
             DataBaseConnector.releaseConnection(con);

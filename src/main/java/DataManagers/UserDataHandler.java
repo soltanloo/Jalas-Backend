@@ -13,8 +13,12 @@ package DataManagers;
 
 import ErrorClasses.DataBaseErrorException;
 import Models.User;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.sql.*;
+import java.util.ArrayList;
 
 public class UserDataHandler {
     private static final String COLUMNS = "(id, firstName, lastName, email, createdPollIds, invitedPollIds, createdMeetingIds, invitedMeetingIds)";
@@ -70,6 +74,32 @@ public class UserDataHandler {
             User user = null;
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                user = userDBtoDomain(rs);
+            }
+            if (user == null)
+                return null;
+
+            stmt.close();
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return user;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
+    public static User getUserByEmail(String email) throws DataBaseErrorException {
+        String sql = "SELECT * FROM User WHERE email = ?";
+        Connection con = DataBaseConnector.getConnection();
+        try {
+            User user = null;
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, email);
             ResultSet rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -155,6 +185,44 @@ public class UserDataHandler {
         } catch(SQLException e) {
             e.printStackTrace();
             throw new DataBaseErrorException();
+        }
+    }
+
+    public static void createSeedUsers(JSONArray userJList) throws JSONException, DataBaseErrorException {
+        for(int i = 0; i < userJList.length(); i++) {
+            JSONObject jUser = userJList.getJSONObject(i);
+            User user = new User();
+
+            user.setId(jUser.getInt("id"));
+            user.setFirstName(jUser.getString("firstName"));
+            user.setLastName(jUser.getString("lastName"));
+            user.setEmail(jUser.getString("email"));
+
+            ArrayList<Integer> createdPollIds = new ArrayList<>();
+//            JSONArray jcreatedPollIds = jUser.getJSONArray("createdPollIds");
+//            for(int j = 0; j < jcreatedPollIds.length(); j++)
+//                createdPollIds.add(jcreatedPollIds.getJSONObject(i).getInt("id"));
+            user.setCreatedPollIds(createdPollIds);
+
+            ArrayList<Integer> invitedPollIds = new ArrayList<>();
+//            JSONArray jinvitedPollIds = jUser.getJSONArray("invitedPollIds");
+//            for(int j = 0; j < jinvitedPollIds.length(); j++)
+//                invitedPollIds.add(jinvitedPollIds.getJSONObject(i).getInt("id"));
+            user.setInvitedPollIds(invitedPollIds);
+
+            ArrayList<Integer> createdMeetingIds = new ArrayList<>();
+//            JSONArray jcreatedMeetingIds = jUser.getJSONArray("createdMeetingIds");
+//            for(int j = 0; j < jcreatedMeetingIds.length(); j++)
+//                createdMeetingIds.add(jcreatedMeetingIds.getJSONObject(i).getInt("id"));
+            user.setCreatedMeetingIds(createdMeetingIds);
+
+            ArrayList<Integer> invitedMeetingIds = new ArrayList<>();
+//            JSONArray jinvitedMeetingIds = jUser.getJSONArray("invitedMeetingIds");
+//            for(int j = 0; j < jinvitedMeetingIds.length(); j++)
+//                invitedMeetingIds.add(jinvitedMeetingIds.getJSONObject(i).getInt("id"));
+            user.setInvitedMeetingIds(invitedMeetingIds);
+
+            addUser(user);
         }
     }
 }
