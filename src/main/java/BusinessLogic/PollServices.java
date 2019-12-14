@@ -3,10 +3,7 @@ package BusinessLogic;
 import DataManagers.PollDataHandler;
 import DataManagers.PollOptionDataHandler;
 import DataManagers.UserDataHandler;
-import ErrorClasses.AccessViolationException;
-import ErrorClasses.DataBaseErrorException;
-import ErrorClasses.DuplicateVoteException;
-import ErrorClasses.ObjectNotFoundInDBException;
+import ErrorClasses.*;
 import Models.Poll;
 import Models.PollOption;
 import Models.User;
@@ -27,7 +24,7 @@ public class PollServices {
         return PollDataHandler.getPoll(id);
     }
 
-    public static void addVote(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException, DuplicateVoteException {
+    public static void addVote(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException, DuplicateVoteException, PollFinishedException {
         int userID = data.getInt("userId");
         int pollID = data.getInt("pollId");
         int optionID = data.getInt("optionId");
@@ -37,6 +34,8 @@ public class PollServices {
         if (option == null || poll == null)
             throw new ObjectNotFoundInDBException();
 
+        if(!poll.isOngoing())
+            throw new PollFinishedException();
         if(!poll.doesContaintOption(option.getId()))
             throw new AccessViolationException();
         if(!poll.isUserInvited(userID))
