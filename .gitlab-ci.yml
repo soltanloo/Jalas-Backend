@@ -35,7 +35,7 @@ k8s-deploy:
   - gcloud config set compute/zone europe-west1-c
   - gcloud config set project se_project_be
   - gcloud config set container/use_client_certificate True
-  - gcloud container clusters get-credentials actuator-sample
+  - gcloud container clusters get-credentials se_project_be
   - kubectl delete secret registry.gitlab.com
   - kubectl create secret docker-registry registry.gitlab.com --docker-server=https://registry.gitlab.com --docker-username=phantombleak --docker-password=$REGISTRY_PASSWD --docker-email=sina.nabavi16@gmail.com
   - kubectl apply -f deployment.yml
