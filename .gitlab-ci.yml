@@ -20,6 +20,7 @@ maven-build:
       - target/*.jar
 
 java:
+  image: maven:3-jdk-13
   stage: unit-test
   script:
     - mvn verify
