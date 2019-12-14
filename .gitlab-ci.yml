@@ -8,8 +8,8 @@ variables:
 
 stages:
   - build
-  - package
-  - deploy
+  - unit-test
+  - integration-test
 
 maven-build:
   image: maven:3-jdk-13
@@ -19,10 +19,12 @@ maven-build:
     paths:
       - target/*.jar
 
-docker-build:
-  stage: package
+java:
+  stage: unit-test
   script:
-  - docker build -t registry.gitlab.com/RastinS/se_project_be
-  - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
-  - docker push registry.gitlab.com/RastinS/se_project_be
-
+  - mvn verify
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
