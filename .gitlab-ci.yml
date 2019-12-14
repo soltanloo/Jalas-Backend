@@ -22,20 +22,7 @@ maven-build:
 docker-build:
   stage: package
   script:
-  - docker build -t registry.gitlab.com/RastinS/se_project_be .
+  - docker build -t registry.gitlab.com/RastinS/se_project_be
   - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.gitlab.com
   - docker push registry.gitlab.com/RastinS/se_project_be
 
-k8s-deploy:
-  image: google/cloud-sdk
-  stage: deploy
-  script:
-  - echo "$GOOGLE_KEY" > key.json
-  - gcloud auth activate-service-account --key-file key.json
-  - gcloud config set compute/zone europe-west1-c
-  - gcloud config set project se_project_be
-  - gcloud config set container/use_client_certificate True
-  - gcloud container clusters get-credentials se_project_be
-  - kubectl delete secret registry.gitlab.com
-  - kubectl create secret docker-registry registry.gitlab.com --docker-server=https://registry.gitlab.com --docker-username=phantombleak --docker-password=$REGISTRY_PASSWD --docker-email=sina.nabavi16@gmail.com
-  - kubectl apply -f deployment.yml
