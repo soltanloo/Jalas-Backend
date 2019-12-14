@@ -1,5 +1,7 @@
 package Models;
 
+import ErrorClasses.DuplicateVoteException;
+
 import java.util.ArrayList;
 
 public class PollOption {
@@ -32,8 +34,11 @@ public class PollOption {
         this.userList = userList;
     }
 
-    public void addVote(int userID) {
+    public boolean addVote(int userID) {
+        if(userList.contains(userID))
+            return false;
         this.userList.add(userID);
+        return true;
     }
 
     public String getStartTime() {

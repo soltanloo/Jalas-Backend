@@ -3,6 +3,7 @@ package Controllers;
 import BusinessLogic.PollServices;
 import ErrorClasses.AccessViolationException;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.DuplicateVoteException;
 import ErrorClasses.ObjectNotFoundInDBException;
 import Models.Poll;
 import org.json.JSONException;
@@ -102,6 +103,10 @@ public class PollsController {
         } catch (AccessViolationException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("OptionID not in poll or user is not invited");
+        } catch (DuplicateVoteException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You already voted for this option!");
+
         }
     }
 }

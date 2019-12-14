@@ -5,6 +5,7 @@ import DataManagers.PollOptionDataHandler;
 import DataManagers.UserDataHandler;
 import ErrorClasses.AccessViolationException;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.DuplicateVoteException;
 import ErrorClasses.ObjectNotFoundInDBException;
 import Models.Poll;
 import Models.PollOption;
@@ -26,7 +27,7 @@ public class PollServices {
         return PollDataHandler.getPoll(id);
     }
 
-    public static void addVote(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException {
+    public static void addVote(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException, DuplicateVoteException {
         int userID = data.getInt("userId");
         int pollID = data.getInt("pollId");
         int optionID = data.getInt("optionId");
@@ -41,7 +42,9 @@ public class PollServices {
         if(!poll.isUserInvited(userID))
             throw new AccessViolationException();
 
-        option.addVote(userID);
+        boolean status = option.addVote(userID);
+        if(status == false)
+            throw new DuplicateVoteException();
         PollOptionDataHandler.updateUserIDList(option);
     }
 
