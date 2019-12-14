@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
-  name: actuator-sample
+  name: se_project-_be
 spec:
   replicas: 2
   template:
