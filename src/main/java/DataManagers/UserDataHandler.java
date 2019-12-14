@@ -15,17 +15,14 @@ import ErrorClasses.DataBaseErrorException;
 import Models.User;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 public class UserDataHandler {
-    private static Connection con = null;
-
     private static final String COLUMNS = "(id, firstName, lastName, email, createdPollIds, invitedPollIds, createdMeetingIds, invitedMeetingIds)";
 
     public static void init() {
+        DataManager.dropExistingTable("User");
+        Connection con = DataBaseConnector.getConnection();
         try {
-            DataManager.dropExistingTable("User");
-            con = DataBaseConnector.getConnection();
             Statement st = con.createStatement();
 
             String sql = "CREATE TABLE " +
@@ -41,26 +38,26 @@ public class UserDataHandler {
             st.executeUpdate(sql);
 
             st.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
     }
 
 
     public static boolean addUser(User user) throws DataBaseErrorException {
         String sql = "INSERT INTO User " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-
+        Connection con = DataBaseConnector.getConnection();
         try{
-            con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
             userDomainToDB(user, st);
             st.executeUpdate();
             st.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return true;
         }catch(SQLException e){
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
         }
     }
@@ -68,10 +65,9 @@ public class UserDataHandler {
 
     public static User getUser(int id) throws DataBaseErrorException {
         String sql = "SELECT * FROM User WHERE id = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         try {
             User user = null;
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -84,28 +80,29 @@ public class UserDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return user;
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
         }
     }
 
     private static void updateList(String listName, String list, int userId) throws DataBaseErrorException {
         String sql = "UPDATE User SET ? = ? where id = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
             st.setString(1, listName);
             st.setString(2, list);
             st.setInt(3, userId);
             st.executeUpdate();
             st.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
         }
     }

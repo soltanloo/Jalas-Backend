@@ -15,6 +15,7 @@ public class Meeting {
     private String setTime;
     private int ownerId;
     private ArrayList<Integer> invitedUserIds = new ArrayList<>();
+    private String title;
 
     public enum Status {
         STALLED  (0),  //calls constructor with value 3
@@ -45,6 +46,14 @@ public class Meeting {
         this.status = Status.STALLED;
     }
 
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public int getOwnerId() {
         return ownerId;

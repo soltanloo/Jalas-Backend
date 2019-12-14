@@ -20,15 +20,13 @@ import java.sql.Timestamp;
 
 
 public class MeetingDataHandler {
-    private static Connection con = null;
-
-    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status, createTime, setTime, ownerId, invitedUserIds)";
+    private static final String COLUMNS = "(id, roomNumber, startTime, finishTime, status, createTime, setTime, ownerId, invitedUserIds, title)";
     private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     public static void init() {
+        DataManager.dropExistingTable("Meeting");
+        Connection con = DataBaseConnector.getConnection();
         try {
-            DataManager.dropExistingTable("Meeting");
-            con = DataBaseConnector.getConnection();
             Statement st = con.createStatement();
 
             String sql = "CREATE TABLE " +
@@ -41,39 +39,39 @@ public class MeetingDataHandler {
                     "createTime TEXT, " +
                     "setTime TEXT, " +
                     "ownerId INTEGER, " +
-                    "invitedUserIds TEXT)";
+                    "invitedUserIds TEXT, " +
+                    "title TEXT)";
             st.executeUpdate(sql);
-
             st.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
     }
 
     public static boolean addMeeting(Meeting meeting) {
-        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
+        String sql = "INSERT INTO Meeting " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        Connection con = DataBaseConnector.getConnection();
         try{
-            con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
 
             meetingDomainToDB(meeting, st);
             st.executeUpdate();
             st.close();
-            con.close();
         }catch(SQLException se){
             se.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             return false;
         }
+        DataBaseConnector.releaseConnection(con);
         return true;
     }
 
     public static Meeting getMeeting (Integer id) throws DataBaseErrorException {
         String sql = "SELECT * FROM Meeting WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
         try {
             Meeting meeting = null;
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -85,10 +83,11 @@ public class MeetingDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return meeting;
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
         }
     }
@@ -98,8 +97,8 @@ public class MeetingDataHandler {
         String sql2 = "UPDATE Meeting SET setTime = ? where id = ?";
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
+        Connection con = DataBaseConnector.getConnection();
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement st1 = con.prepareStatement(sql1);
             PreparedStatement st2 = con.prepareStatement(sql2);
 
@@ -114,17 +113,16 @@ public class MeetingDataHandler {
 
             st1.close();
             st2.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
     }
     public static int getSetMeetingsNum(){
         String sql = "SELECT * FROM Meeting WHERE status = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         int meetingsSet = 0;
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, 1);
             ResultSet rs = stmt.executeQuery();
@@ -141,19 +139,20 @@ public class MeetingDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return meetingsSet;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
         return 0;
     }
 
     public static long getCreationMeanTime() {
         long meanTime = 0;
+        String sql = "SELECT * FROM Meeting WHERE status = ?";
+        Connection con = DataBaseConnector.getConnection();
         try {
-            String sql = "SELECT * FROM Meeting WHERE status = ?";
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, Meeting.Status.SET.getLevelCode());
             ResultSet rs = stmt.executeQuery();
@@ -166,20 +165,20 @@ public class MeetingDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return meanTime;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
         return 0;
     }
 
     public static int getCancelledMeetingsNum() {
         String sql = "SELECT * FROM Meeting WHERE status = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         int meetingsCancelled = 0;
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, -1);
             ResultSet rs = stmt.executeQuery();
@@ -189,20 +188,20 @@ public class MeetingDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return meetingsCancelled;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
         return 0;
     }
 
     public static ArrayList<Meeting> getStalledMeetings() {
         String sql = "SELECT * FROM Meeting WHERE status = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         ArrayList<Meeting> meetings = new ArrayList<>();
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, 0);
             ResultSet rs = stmt.executeQuery();
@@ -212,28 +211,30 @@ public class MeetingDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return meetings;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
         return null;
     }
 
     public static boolean cancelMeeting(int id) {
         String sql = "UPDATE Meeting SET status = ? where id = ?";
+        Connection con = DataBaseConnector.getConnection();
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, Meeting.Status.CANCELLED.getLevelCode());
             stmt.setInt(2, id);
             stmt.executeUpdate();
             stmt.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
         return false;
     }
 
@@ -248,6 +249,7 @@ public class MeetingDataHandler {
             st.setString(7, meeting.getSetTime());
             st.setInt(8, meeting.getOwnerId());
             st.setString(9, DataHelpers.stringify(meeting.getInvitedUserIds()));
+            st.setString(10, meeting.getTitle());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -265,6 +267,7 @@ public class MeetingDataHandler {
             meeting.setSetTime(rs.getString("setTime"));
             meeting.setOwnerId(rs.getInt("ownerId"));
             meeting.setInvitedUserIds(DataHelpers.makeList(rs.getString("invitedUserIds")));
+            meeting.setTitle(rs.getString("title"));
         } catch(SQLException e) {
             e.printStackTrace();
         }

@@ -26,6 +26,7 @@ public class MeetingServices {
         meeting.setRoomNumber(data.getInt("roomNumber"));
         meeting.setStartTime(data.getString("startTime"));
         meeting.setFinishTime(data.getString("finishTime"));
+        meeting.setTitle(poll.getTitle());
         meeting.setOwnerId(poll.getOwnerId());
         meeting.setInvitedUserIds(poll.getInvitedUserIds());
         meeting.setCreateTime(sdf.format(timestamp));

@@ -19,14 +19,12 @@ import java.util.ArrayList;
  */
 
 public class PollDataHandler {
-    private static Connection con = null;
-
     private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds)";
 
     public static void init() {
+        DataManager.dropExistingTable("Poll");
+        Connection con = DataBaseConnector.getConnection();
         try {
-            DataManager.dropExistingTable("Poll");
-            con = DataBaseConnector.getConnection();
             Statement st = con.createStatement();
 
             String sql = "CREATE TABLE " +
@@ -38,19 +36,17 @@ public class PollDataHandler {
                     "ownerId INTEGER, " +
                     "invitedUserIds TEXT)";
             st.executeUpdate(sql);
-
             st.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
     }
 
     public static boolean addPoll(Poll poll) {
         String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?)";
-
+        Connection con = DataBaseConnector.getConnection();
         try{
-            con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
 
             for (PollOption pollOption : poll.getOptions()) {
@@ -59,20 +55,20 @@ public class PollDataHandler {
             pollDomainToDB(poll, st);
             st.executeUpdate();
             st.close();
-            con.close();
         }catch(SQLException se){
             se.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             return false;
         }
+        DataBaseConnector.releaseConnection(con);
         return true;
     }
 
     public static ArrayList<Poll> getAllPols() throws DataBaseErrorException {
         String sql = "SELECT * FROM Poll";
-
+        Connection con = DataBaseConnector.getConnection();
         ArrayList<Poll> polls = new ArrayList<>();
         try {
-            con = DataBaseConnector.getConnection();
             Statement stmt = con.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -82,20 +78,20 @@ public class PollDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return polls;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
         return null;
     }
 
     public static Poll getPoll(int id) throws DataBaseErrorException {
         String sql = "SELECT * FROM Poll WHERE id = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         try {
             Poll poll = null;
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -109,28 +105,29 @@ public class PollDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return poll;
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
         return null;
     }
 
     public static void unsetOngoingStatus(int id) throws DataBaseErrorException {
         String sql = "UPDATE Poll SET isOngoing = ? where id = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, 0);
             stmt.setInt(2, id);
 
             stmt.executeUpdate();
             stmt.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
         }
     }

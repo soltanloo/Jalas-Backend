@@ -16,6 +16,7 @@ import java.sql.Statement;
 public class DataManager {
 
     public static void init () throws Exception {
+        DataBaseConnector.init();
         MeetingDataHandler.init();
         PollDataHandler.init();
         PollOptionDataHandler.init();
@@ -30,9 +31,8 @@ public class DataManager {
     }
 
     public static void dropExistingTable (String tableName) {
+        Connection con = DataBaseConnector.getConnection();
         try {
-            Connection con = DataBaseConnector.getConnection();
-
             Statement stmt = con.createStatement();
             String    sql  = "SELECT name FROM sqlite_master WHERE type='table' AND name='" + tableName + "'";
             ResultSet rs   = stmt.executeQuery(sql);
@@ -45,9 +45,9 @@ public class DataManager {
             }
             rs.close();
             stmt.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
     }
 }

@@ -5,14 +5,12 @@ import Models.PollOption;
 import java.sql.*;
 
 public class PollOptionDataHandler {
-    private static Connection con = null;
-
     private static final String COLUMNS = "(id, userList, startTime, finishTime)";
 
     public static void init() {
+        DataManager.dropExistingTable("PollOption");
+        Connection con = DataBaseConnector.getConnection();
         try {
-            DataManager.dropExistingTable("PollOption");
-            con = DataBaseConnector.getConnection();
             Statement st = con.createStatement();
 
             String sql = "CREATE TABLE " +
@@ -24,36 +22,32 @@ public class PollOptionDataHandler {
             st.executeUpdate(sql);
 
             st.close();
-            con.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        DataBaseConnector.releaseConnection(con);
     }
 
-    public static boolean addOption(PollOption option) {
+    public static void addOption(PollOption option) {
         String sql = "INSERT INTO PollOption " + COLUMNS + " VALUES (?, ?, ?, ?)";
-
+        Connection con = DataBaseConnector.getConnection();
         try{
-            con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
 
             PollOptionDomainToDB(option, st);
             st.executeUpdate();
             st.close();
-            con.close();
         }catch(SQLException se){
             se.printStackTrace();
-            return false;
         }
-        return true;
+        DataBaseConnector.releaseConnection(con);
     }
 
     public static PollOption getPollOption(int id) throws DataBaseErrorException {
         String sql = "SELECT * FROM PollOption WHERE id = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         try {
             PollOption option = null;
-            con = DataBaseConnector.getConnection();
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -65,28 +59,28 @@ public class PollOptionDataHandler {
 
             stmt.close();
             rs.close();
-            con.close();
+            DataBaseConnector.releaseConnection(con);
             return option;
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
         }
     }
 
-    public static boolean updateUserIDList(PollOption pollOption) throws DataBaseErrorException {
+    public static void updateUserIDList(PollOption pollOption) throws DataBaseErrorException {
         String sql = "UPDATE PollOption SET userList = ? where id = ?";
-
+        Connection con = DataBaseConnector.getConnection();
         try {
-            con = DataBaseConnector.getConnection();
             PreparedStatement st = con.prepareStatement(sql);
             st.setString(1, DataHelpers.stringify(pollOption.getUserList()));
             st.setInt(2, pollOption.getId());
             st.executeUpdate();
             st.close();
-            con.close();
-            return true;
+            DataBaseConnector.releaseConnection(con);
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
         }
     }
