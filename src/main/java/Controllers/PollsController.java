@@ -99,6 +99,9 @@ public class PollsController {
         } catch (ObjectNotFoundInDBException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Poll option not found");
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("OptionID not in poll or user is not invited");
         }
     }
 }

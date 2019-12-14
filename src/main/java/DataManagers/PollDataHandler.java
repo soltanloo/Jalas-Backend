@@ -139,6 +139,7 @@ public class PollDataHandler {
         try {
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setString(1, DataHelpers.stringify(poll.getInvitedUserIds()));
+            stmt.setInt(2, poll.getId());
             stmt.executeUpdate();
             stmt.close();
             DataBaseConnector.releaseConnection(con);

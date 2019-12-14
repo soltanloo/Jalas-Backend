@@ -119,14 +119,14 @@ public class UserDataHandler {
         }
     }
 
-    private static void updateList(String listName, String list, int userId) throws DataBaseErrorException {
-        String sql = "UPDATE User SET ? = ? where id = ?";
+    private static void updateList(String sql, String list, int userId) throws DataBaseErrorException {
         Connection con = DataBaseConnector.getConnection();
         try {
+            System.out.println("here");
             PreparedStatement st = con.prepareStatement(sql);
-            st.setString(1, listName);
-            st.setString(2, list);
-            st.setInt(3, userId);
+            System.out.println("here");
+            st.setString(1, list);
+            st.setInt(2, userId);
             st.executeUpdate();
             st.close();
             DataBaseConnector.releaseConnection(con);
@@ -138,19 +138,23 @@ public class UserDataHandler {
     }
 
     public static void updateCreatedPollIds(User user) throws DataBaseErrorException {
-        updateList("createdPollIds", DataHelpers.stringify(user.getCreatedPollIds()), user.getId());
+        String sql = "UPDATE User SET createdPollIds = ? WHERE id = ?";
+        updateList(sql, DataHelpers.stringify(user.getCreatedPollIds()), user.getId());
     }
 
     public static void updateInvitedPollIds(User user) throws DataBaseErrorException {
-        updateList("invitedPollIds", DataHelpers.stringify(user.getInvitedPollIds()), user.getId());
+        String sql = "UPDATE User SET invitedPollIds = ? WHERE id = ?";
+        updateList(sql, DataHelpers.stringify(user.getInvitedPollIds()), user.getId());
     }
 
     public static void updateCreatedMeetingIds(User user) throws DataBaseErrorException {
-        updateList("createdMeetingIds", DataHelpers.stringify(user.getCreatedPollIds()), user.getId());
+        String sql = "UPDATE User SET createdMeetingIds = ? WHERE id = ?";
+        updateList(sql, DataHelpers.stringify(user.getCreatedPollIds()), user.getId());
     }
 
     public static void updateInvitedMeetingIds(User user) throws DataBaseErrorException {
-        updateList("invitedMeetingIds", DataHelpers.stringify(user.getInvitedMeetingIds()), user.getId());
+        String sql = "UPDATE User SET invitedMeetingIds = ? WHERE id = ?";
+        updateList(sql, DataHelpers.stringify(user.getInvitedMeetingIds()), user.getId());
     }
 
     public static String getUserEmail(int id) throws DataBaseErrorException {

@@ -9,17 +9,19 @@ public class DataHelpers {
         boolean isFirst = true;
         for (int s : list) {
             if(isFirst) {
-                rs = Integer.toString(s);
+                rs = s + ",";
                 isFirst = false;
             }
             else
-                rs = rs + ',' + s;
+                rs = rs + s + ",";
         }
         return rs;
     }
 
     public static ArrayList<Integer> makeList(String rs){
         ArrayList<Integer> rl = new ArrayList<>();
+        if(rs == null || rs == "" || rs.length() <= 1)
+            return rl;
         String[] a = rs.split(",");
         for (String str : a) {
             rl.add(Integer.parseInt(str));

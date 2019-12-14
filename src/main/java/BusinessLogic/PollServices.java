@@ -26,13 +26,20 @@ public class PollServices {
         return PollDataHandler.getPoll(id);
     }
 
-    public static void addVote(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException {
-        int userID = data.getInt("userID");
-        int optionID = data.getInt("optionID");
+    public static void addVote(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException {
+        int userID = data.getInt("userId");
+        int pollID = data.getInt("pollId");
+        int optionID = data.getInt("optionId");
 
+        Poll poll = PollDataHandler.getPoll(pollID);
         PollOption option = PollOptionDataHandler.getPollOption(optionID);
-        if (option == null)
+        if (option == null || poll == null)
             throw new ObjectNotFoundInDBException();
+
+        if(!poll.doesContaintOption(option.getId()))
+            throw new AccessViolationException();
+        if(!poll.isUserInvited(userID))
+            throw new AccessViolationException();
 
         option.addVote(userID);
         PollOptionDataHandler.updateUserIDList(option);
@@ -55,7 +62,7 @@ public class PollServices {
         poll.addInvitedUser(user.getId());
         PollDataHandler.updateInvitedIds(poll);
 
-        String content = "/api/poll" + pollId;
+        String content = "/api/poll/" + pollId;
         EmailService.sendMail(userEmail,content);
 
         user.addInvitedPollId(poll.getId());

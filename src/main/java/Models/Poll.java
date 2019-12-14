@@ -81,5 +81,21 @@ public class Poll {
         return retList;
     }
 
+    public boolean doesContaintOption(int optionId) {
+        for (PollOption po : options) {
+            if(po.getId() == optionId)
+                return true;
+        }
+        return false;
+    }
+
+    public boolean isUserInvited(int userID) {
+        for (int id : invitedUserIds) {
+            if(id == userID)
+                return true;
+        }
+        return false;
+    }
+
 
 }

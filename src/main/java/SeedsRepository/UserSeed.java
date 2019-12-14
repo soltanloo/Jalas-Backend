@@ -129,7 +129,7 @@ public class UserSeed {
             "        \"id\": \"810195415\",\n" +
             "            \"firstName\": \"Iva\",\n" +
             "            \"lastName\": \"Gonzalez\",\n" +
-            "            \"email\": \"greershaw@kozgene.com\",\n" +
+            "            \"email\": \"rastin30@gmail.com\",\n" +
             "            \"createdPollIds\": [\n" +
             "    ],\n" +
             "        \"invitedPollIds\": [\n" +
