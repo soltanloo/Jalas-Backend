@@ -47,6 +47,36 @@ public class PollsController {
         }
     }
 
+    @RequestMapping (value = "/api/poll", method = RequestMethod.POST)
+    public ResponseEntity poll (HttpServletRequest req, @RequestBody String reqData) {
+        try {
+            JSONObject data = new JSONObject(reqData);
+            PollServices.createPoll(data);
+            return ResponseEntity.ok("Vote added");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        }
+    }
+
+    @RequestMapping(value = "/api/poll/addParticipant", method = RequestMethod.POST)
+    public ResponseEntity addParticipant (HttpServletRequest req, @RequestBody String reqData) {
+        try{
+            JSONObject data = new JSONObject(reqData);
+            PollServices.addParticipant(data);
+            return ResponseEntity.ok("Participant added");
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        }
+    }
+
     @RequestMapping (value = "/api/vote", method = RequestMethod.POST)
     public ResponseEntity vote (HttpServletRequest req, @RequestBody String reqData) {
         try {

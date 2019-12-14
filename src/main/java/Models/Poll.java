@@ -30,6 +30,8 @@ public class Poll {
         this.invitedUserIds = invitedUserIds;
     }
 
+    public void addInvitedUser(int invitedUserId){this.invitedUserIds.add(invitedUserId);}
+
     public boolean isOngoing() {
         return isOngoing;
     }
@@ -78,5 +80,6 @@ public class Poll {
         }
         return retList;
     }
+
 
 }
