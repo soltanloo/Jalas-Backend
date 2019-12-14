@@ -2,6 +2,7 @@ package Controllers;
 
 import BusinessLogic.MeetingServices;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.PollFinishedException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
 import org.json.JSONException;
@@ -32,6 +33,9 @@ public class MeetingController {
         } catch (DataBaseErrorException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (PollFinishedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Poll finished");
         }
     }
 

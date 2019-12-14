@@ -1,10 +1,7 @@
 package Controllers;
 
 import BusinessLogic.PollServices;
-import ErrorClasses.AccessViolationException;
-import ErrorClasses.DataBaseErrorException;
-import ErrorClasses.DuplicateVoteException;
-import ErrorClasses.ObjectNotFoundInDBException;
+import ErrorClasses.*;
 import Models.Poll;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -106,7 +103,9 @@ public class PollsController {
         } catch (DuplicateVoteException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You already voted for this option!");
-
+        } catch (PollFinishedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Poll finished");
         }
     }
 }

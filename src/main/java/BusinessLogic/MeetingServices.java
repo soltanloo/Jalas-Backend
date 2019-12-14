@@ -2,6 +2,7 @@ package BusinessLogic;
 
 import DataManagers.MeetingDataHandler;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.PollFinishedException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
 import Models.Poll;
@@ -16,11 +17,13 @@ public class MeetingServices {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
-    public static Meeting  addMeeting(JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException {
+    public static Meeting  addMeeting(JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException, PollFinishedException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         Poll poll = PollServices.getPoll(data.getInt("pollId"));
 
+        if (!poll.isOngoing())
+            throw new PollFinishedException();
         Meeting meeting = new Meeting();
 
         meeting.setRoomNumber(data.getInt("roomNumber"));

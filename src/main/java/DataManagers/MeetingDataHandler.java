@@ -225,7 +225,7 @@ public class MeetingDataHandler {
         Connection con = DataBaseConnector.getConnection();
         try {
             PreparedStatement stmt = con.prepareStatement(sql);
-            stmt.setInt(1, Meeting.Status.CANCELLED.getLevelCode());
+            stmt.setInt(1, -1);
             stmt.setInt(2, id);
             stmt.executeUpdate();
             stmt.close();
