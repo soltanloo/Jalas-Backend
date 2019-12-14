@@ -12,7 +12,7 @@ stages:
   - deploy
 
 maven-build:
-  image: maven:latest
+  image: maven:3-jdk-13
   stage: build
   script: "mvn package -B"
   artifacts:
