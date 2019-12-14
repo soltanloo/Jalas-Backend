@@ -7,10 +7,10 @@ spec:
   template:
     metadata:
       labels:
-        app: actuator-sample
+        app: se_project-_be
     spec:
       containers:
-        - name: actuator-sample
+        - name: se_project-_be
           image: registry.gitlab.com/RastinS/se_project-_be
           imagePullPolicy: Always
           ports:
