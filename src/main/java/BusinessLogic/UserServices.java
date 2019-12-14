@@ -32,4 +32,8 @@ public class UserServices {
     public static User getUser(int id) throws DataBaseErrorException {
         return UserDataHandler.getUser(id);
     }
+
+    public static String getUserEmail(int id) throws DataBaseErrorException {
+        return UserDataHandler.getUserEmail(id);
+    }
 }

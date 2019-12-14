@@ -5,7 +5,7 @@ import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
 import Models.Poll;
-import Models.User;
+import Services.EmailService;
 import Services.RoomReservationService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,6 +35,12 @@ public class MeetingServices {
         if(MeetingDataHandler.addMeeting(meeting)) {
             UserServices.addUserCreatedMeeting(poll.getOwnerId(), meeting.getId());
             PollServices.unsetOngoingStatus(poll);
+
+            String content = "New Meeting : \n" +
+                    "api/meeting/" + meeting.getId();
+            for(int userID : poll.getInvitedUserIds()) {
+                EmailService.sendMail(UserServices.getUserEmail(userID), content);
+            }
 
             if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {
                 MeetingDataHandler.setMeetingStatus(meeting);

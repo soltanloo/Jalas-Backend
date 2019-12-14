@@ -153,6 +153,30 @@ public class UserDataHandler {
         updateList("invitedMeetingIds", DataHelpers.stringify(user.getInvitedMeetingIds()), user.getId());
     }
 
+    public static String getUserEmail(int id) throws DataBaseErrorException {
+        String sql = "SELECT email FROM User WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            String email = null;
+            while (rs.next()) {
+                email = rs.getString("email");
+            }
+
+            stmt.close();
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return email;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
 
     public static void userDomainToDB(User user, PreparedStatement st) throws DataBaseErrorException {
         try {
