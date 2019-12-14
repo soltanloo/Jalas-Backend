@@ -22,7 +22,7 @@ maven-build:
 java:
   stage: unit-test
   script:
-  - mvn verify
+    - $MAVEN_HOME/bin/mvn verify
   artifacts:
     reports:
       junit:
