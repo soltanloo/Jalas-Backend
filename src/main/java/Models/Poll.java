@@ -97,5 +97,13 @@ public class Poll {
         return false;
     }
 
+    public void removeInvitedUser(int userId) {
+        for (int i = 0; i < invitedUserIds.size(); i++) {
+            if(invitedUserIds.get(i) == userId) {
+                invitedUserIds.remove(i);
+                break;
+            }
+        }
+    }
 
 }

@@ -39,6 +39,9 @@ public class MeetingServices {
             UserServices.addUserCreatedMeeting(poll.getOwnerId(), meeting.getId());
             PollServices.unsetOngoingStatus(poll);
 
+            for (int userId : poll.getInvitedUserIds()) {
+                UserServices.addUserInvitedMeeting(userId, meeting.getId());
+            }
             String content = "New Meeting : \n" +
                     "api/meeting/" + meeting.getId();
             for(int userID : poll.getInvitedUserIds()) {

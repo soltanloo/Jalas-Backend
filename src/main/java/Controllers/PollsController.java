@@ -82,6 +82,27 @@ public class PollsController {
         }
     }
 
+    @RequestMapping(value = "/api/poll/removeParticipant", method = RequestMethod.POST)
+    public ResponseEntity removeParticipant (HttpServletRequest req, @RequestBody String reqData) {
+        try{
+            JSONObject data = new JSONObject(reqData);
+            PollServices.removeParticipant(data);
+            return ResponseEntity.ok("Participant removed");
+        } catch(JSONException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sent owner ID does not match poll's owner ID");
+        } catch (UserWasNotInvitedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user was not invited");
+        }
+    }
+
     @RequestMapping (value = "/api/vote", method = RequestMethod.POST)
     public ResponseEntity vote (HttpServletRequest req, @RequestBody String reqData) {
         try {

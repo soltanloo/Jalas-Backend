@@ -71,6 +71,32 @@ public class PollServices {
         UserDataHandler.updateInvitedPollIds(user);
 
     }
+
+    public static void removeParticipant(JSONObject data) throws DataBaseErrorException, AccessViolationException, JSONException, UserWasNotInvitedException {
+        String userEmail = data.getString("userEmail");
+        int pollId = data.getInt("pollId");
+        int ownerId = data.getInt("userId");
+        User owner = UserDataHandler.getUser(ownerId);
+        User user = UserDataHandler.getUserByEmail(userEmail);
+        Poll poll = PollDataHandler.getPoll(pollId);
+
+        if (owner == null || user == null || poll == null)
+            throw new DataBaseErrorException();
+
+        if (!owner.didCreatedPoll(poll.getId()))
+            throw new AccessViolationException();
+
+        if(!poll.isUserInvited(user.getId()))
+            throw new UserWasNotInvitedException();
+
+        poll.removeInvitedUser(user.getId());
+        PollDataHandler.updateInvitedIds(poll);
+
+        user.removeInvitedPollId(poll.getId());
+        UserDataHandler.updateInvitedPollIds(user);
+    }
+
+
     public static Poll createPoll(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException {
         int userID = data.getInt("userID");
         User user = UserDataHandler.getUser(userID);

@@ -98,4 +98,12 @@ public class User {
         return false;
     }
 
+    public void removeInvitedPollId(int pollId) {
+        for (int i = 0; i < invitedPollIds.size(); i++) {
+            if(invitedPollIds.get(i) == pollId) {
+                invitedPollIds.remove(i);
+                break;
+            }
+        }
+    }
 }
