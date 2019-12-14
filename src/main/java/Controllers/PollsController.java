@@ -52,8 +52,8 @@ public class PollsController {
     public ResponseEntity poll (HttpServletRequest req, @RequestBody String reqData) {
         try {
             JSONObject data = new JSONObject(reqData);
-            PollServices.createPoll(data);
-            return ResponseEntity.ok("Poll created");
+            Poll poll = PollServices.createPoll(data);
+            return ResponseEntity.ok(poll.getId());
         } catch (JSONException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");

@@ -69,7 +69,7 @@ public class PollServices {
         UserDataHandler.updateInvitedPollIds(user);
 
     }
-    public static void createPoll(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException {
+    public static Poll createPoll(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException {
         int userID = data.getInt("userID");
         User user = UserDataHandler.getUser(userID);
         if (user == null) {
@@ -92,6 +92,7 @@ public class PollServices {
             throw new DataBaseErrorException();
         user.addCreatedPollId(poll.getId());
         UserDataHandler.updateCreatedPollIds(user);
+        return poll;
     }
 
 
