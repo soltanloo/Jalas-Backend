@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: se_project_be
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: se_project_be
+    spec:
+      containers:
+        - name: se_project-_be
+          image: registry.gitlab.com/RastinS/se_project_be
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: registry.gitlab.com
