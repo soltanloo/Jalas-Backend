@@ -42,9 +42,10 @@ public class PollServices {
             throw new AccessViolationException();
 
         boolean status = option.addVote(userID);
-        if(status == false)
+        if(!status)
             throw new DuplicateVoteException();
         PollOptionDataHandler.updateUserIDList(option);
+        UserServices.notifyNewVote(userID, pollID);
     }
 
     public static void addParticipant(JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
@@ -64,7 +65,8 @@ public class PollServices {
         poll.addInvitedUser(user.getId());
         PollDataHandler.updateInvitedIds(poll);
 
-        String content = "/api/poll/" + pollId;
+        String content = "You have been added to a new poll!\n";
+        content += "http://localhost:8080/api/poll/" + pollId;
         EmailService.sendMail(userEmail,content);
 
         user.addInvitedPollId(poll.getId());
@@ -120,6 +122,26 @@ public class PollServices {
             throw new DataBaseErrorException();
         user.addCreatedPollId(poll.getId());
         UserDataHandler.updateCreatedPollIds(user);
+        return poll;
+    }
+
+    public static Poll addOptionToPoll(JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+        int pollId = data.getInt("pollId");
+        int ownerId = data.getInt("userId");
+        User owner = UserDataHandler.getUser(ownerId);
+        Poll poll = PollDataHandler.getPoll(pollId);
+
+        if (owner == null || poll == null)
+            throw new DataBaseErrorException();
+
+        if (!owner.didCreatedPoll(poll.getId()))
+            throw new AccessViolationException();
+
+        PollOption option = new PollOption(data.getString("startTime"), data.getString("finishTime"));
+        poll.addOption(option);
+        PollOptionDataHandler.addOption(option);
+        PollDataHandler.updateOptions(poll);
+        UserServices.notifyNewOption(poll.getInvitedUserIds(), poll.getId());
         return poll;
     }
 

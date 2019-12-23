@@ -150,6 +150,24 @@ public class PollDataHandler {
         }
     }
 
+    public static void updateOptions(Poll poll) throws DataBaseErrorException {
+        String sql = "UPDATE Poll SET options = ? WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, DataHelpers.stringify(poll.getOptionsIDs()));
+            stmt.setInt(2, poll.getId());
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static void pollDomainToDB(Poll poll,  PreparedStatement st) {
         try {
             st.setInt(1, poll.getId());

@@ -42,7 +42,7 @@ public class MeetingServices {
             for (int userId : poll.getInvitedUserIds()) {
                 UserServices.addUserInvitedMeeting(userId, meeting.getId());
             }
-            String content = "New Meeting : \n" +
+            String content = "New Meeting has been arranged!\n" +
                     "api/meeting/" + meeting.getId();
             for(int userID : poll.getInvitedUserIds()) {
                 EmailService.sendMail(UserServices.getUserEmail(userID), content);
