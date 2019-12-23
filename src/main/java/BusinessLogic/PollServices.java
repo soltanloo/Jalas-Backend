@@ -145,6 +145,29 @@ public class PollServices {
         return poll;
     }
 
+    public static Poll removeOptionFromPoll(JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+        int pollId = data.getInt("pollId");
+        int ownerId = data.getInt("userId");
+        int pollOptionId = data.getInt("optionId");
+        User owner = UserDataHandler.getUser(ownerId);
+        Poll poll = PollDataHandler.getPoll(pollId);
+
+        if (owner == null || poll == null)
+            throw new DataBaseErrorException();
+
+        if (!owner.didCreatedPoll(poll.getId()))
+            throw new AccessViolationException();
+
+        if (!poll.doesContaintOption(pollOptionId))
+            throw new AccessViolationException();
+
+        poll.removeOption(pollOptionId);
+        PollOptionDataHandler.removeOption(pollOptionId);
+        PollDataHandler.updateOptions(poll);
+
+        return poll;
+    }
+
 
     public static void unsetOngoingStatus(Poll poll) throws DataBaseErrorException {
         PollDataHandler.unsetOngoingStatus(poll.getId());

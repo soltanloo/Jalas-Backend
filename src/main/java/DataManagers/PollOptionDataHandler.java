@@ -43,6 +43,23 @@ public class PollOptionDataHandler {
         DataBaseConnector.releaseConnection(con);
     }
 
+    public static void removeOption(int optionId) throws DataBaseErrorException {
+        String sql = "DELETE FROM PollOption WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, optionId);
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static PollOption getPollOption(int id) throws DataBaseErrorException {
         String sql = "SELECT * FROM PollOption WHERE id = ?";
         Connection con = DataBaseConnector.getConnection();

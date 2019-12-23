@@ -82,6 +82,24 @@ public class PollsController {
         }
     }
 
+    @RequestMapping(value = "/api/poll/removeOption", method = RequestMethod.DELETE)
+    public ResponseEntity removeOption(HttpServletRequest req, @RequestBody String reqData) {
+        try {
+            JSONObject data = new JSONObject(reqData);
+            Poll poll = PollServices.removeOptionFromPoll(data);
+            return ResponseEntity.ok(poll.getId());
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are not this poll's owner");
+        }
+    }
+
     @RequestMapping(value = "/api/poll/addParticipant", method = RequestMethod.POST)
     public ResponseEntity addParticipant (HttpServletRequest req, @RequestBody String reqData) {
         try{

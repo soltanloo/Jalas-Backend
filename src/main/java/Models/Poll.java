@@ -106,4 +106,12 @@ public class Poll {
         }
     }
 
+    public void removeOption(int optionId) {
+        for (int i = 0; i < options.size(); i++)
+            if (options.get(i).getId() == optionId) {
+                options.remove(i);
+                break;
+            }
+    }
+
 }
