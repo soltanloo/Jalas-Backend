@@ -9,10 +9,14 @@ package DataManagers;
 //private List<Integer> invitedPollIds;
 //private List<Integer> createdMeetingIds;
 //private List<Integer> invitedMeetingIds;
+//private boolean isLoggedIn = false;
+//private String password;
+//private String token;
 
 
 import ErrorClasses.DataBaseErrorException;
 import Models.User;
+import Services.MD5Service;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,7 +25,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class UserDataHandler {
-    private static final String COLUMNS = "(id, firstName, lastName, email, createdPollIds, invitedPollIds, createdMeetingIds, invitedMeetingIds)";
+    private static final String COLUMNS = "(id, firstName, lastName, email, createdPollIds, invitedPollIds, createdMeetingIds, invitedMeetingIds, isLoggedIn, password, role)";
 
     public static void init() {
         DataManager.dropExistingTable("User");
@@ -34,11 +38,14 @@ public class UserDataHandler {
                     "(id INTEGER PRIMARY KEY," +
                     "firstName TEXT, " +
                     "lastName TEXT, " +
-                    "email TEXT, " +
+                    "email TEXT UNIQUE , " +
                     "createdPollIds TEXT, " +
                     "invitedPollIds TEXT, " +
                     "createdMeetingIds TEXT, " +
-                    "invitedMeetingIds TEXT)";
+                    "invitedMeetingIds TEXT, " +
+                    "isLoggedIn INTEGER, " +
+                    "password TEXT, " +
+                    "role TEXT)";
             st.executeUpdate(sql);
 
             st.close();
@@ -49,8 +56,8 @@ public class UserDataHandler {
     }
 
 
-    public static boolean addUser(User user) throws DataBaseErrorException {
-        String sql = "INSERT INTO User " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    public static void addUser(User user) throws DataBaseErrorException {
+        String sql = "INSERT INTO User " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -58,8 +65,7 @@ public class UserDataHandler {
             st.executeUpdate();
             st.close();
             DataBaseConnector.releaseConnection(con);
-            return true;
-        }catch(SQLException e){
+        } catch(SQLException e){
             e.printStackTrace();
             DataBaseConnector.releaseConnection(con);
             throw new DataBaseErrorException();
@@ -181,6 +187,38 @@ public class UserDataHandler {
         }
     }
 
+    public static boolean checkPasswordCorrectness (String email, String password) {
+        String sql = "SELECT password FROM USER WHERE email = ?";
+        Connection con = DataBaseConnector.getConnection();
+        boolean result = false;
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.getString(1).equals(password))
+                result = true;
+            rs.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataBaseConnector.releaseConnection(con);
+        return result;
+    }
+
+    public static void userLogin (String email) {
+        String sql = "UPDATE USER SET isLoggedIn = 1 WHERE email = ?";
+        Connection con = DataBaseConnector.getConnection();
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, email);
+            stmt.executeUpdate();
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        DataBaseConnector.releaseConnection(con);
+    }
+
 
     public static void userDomainToDB(User user, PreparedStatement st) throws DataBaseErrorException {
         try {
@@ -192,6 +230,12 @@ public class UserDataHandler {
             st.setString(6, DataHelpers.stringify(user.getInvitedPollIds()));
             st.setString(7, DataHelpers.stringify(user.getCreatedMeetingIds()));
             st.setString(8, DataHelpers.stringify(user.getInvitedMeetingIds()));
+            if (user.isLoggedIn())
+                st.setInt(9, 1);
+            else
+                st.setInt(9, 0);
+            st.setString(10, user.getPassword());
+            st.setString(11, user.getRole());
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DataBaseErrorException();
@@ -209,6 +253,12 @@ public class UserDataHandler {
             user.setInvitedPollIds(DataHelpers.makeList(rs.getString("invitedPollIds")));
             user.setCreatedMeetingIds(DataHelpers.makeList(rs.getString("createdMeetingIds")));
             user.setInvitedMeetingIds(DataHelpers.makeList(rs.getString("invitedMeetingIds")));
+            if (rs.getInt("isLoggedIn") == 1)
+                user.setLoggedIn(true);
+            else
+                user.setLoggedIn(false);
+            user.setPassword(rs.getString("password"));
+            user.setRole(rs.getString("role"));
             return user;
         } catch(SQLException e) {
             e.printStackTrace();
@@ -248,6 +298,11 @@ public class UserDataHandler {
 //            for(int j = 0; j < jinvitedMeetingIds.length(); j++)
 //                invitedMeetingIds.add(jinvitedMeetingIds.getJSONObject(i).getInt("id"));
             user.setInvitedMeetingIds(invitedMeetingIds);
+
+            user.setLoggedIn(false);
+
+            String password = MD5Service.changeToMd5(jUser.getString("password"));
+            user.setPassword(password);
 
             addUser(user);
         }

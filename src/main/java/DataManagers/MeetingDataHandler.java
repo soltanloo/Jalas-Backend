@@ -220,7 +220,7 @@ public class MeetingDataHandler {
         return null;
     }
 
-    public static boolean cancelMeeting(int id) {
+    public static void cancelMeeting(int id) throws DataBaseErrorException {
         String sql = "UPDATE Meeting SET status = ? where id = ?";
         Connection con = DataBaseConnector.getConnection();
         try {
@@ -230,12 +230,11 @@ public class MeetingDataHandler {
             stmt.executeUpdate();
             stmt.close();
             DataBaseConnector.releaseConnection(con);
-            return true;
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
         }
-        DataBaseConnector.releaseConnection(con);
-        return false;
     }
 
     public static void meetingDomainToDB(Meeting meeting,  PreparedStatement st) {

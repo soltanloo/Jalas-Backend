@@ -2,6 +2,7 @@ package Controllers;
 
 import BusinessLogic.MeetingServices;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.NotTheOwnerException;
 import ErrorClasses.PollFinishedException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
@@ -17,11 +18,15 @@ import javax.servlet.http.HttpServletRequest;
 public class MeetingController {
     @RequestMapping (value = "/api/addMeeting", method = RequestMethod.POST)
     public ResponseEntity addMeeting (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
         Meeting meeting = null;
         try {
             JSONObject data = new JSONObject(reqData);
 
-            meeting = MeetingServices.addMeeting(data);
+            meeting = MeetingServices.addMeeting(Integer.parseInt(userId), data);
             return ResponseEntity.ok(meeting);
 
         } catch (RoomReservationErrorException e) {
@@ -36,17 +41,28 @@ public class MeetingController {
         } catch (PollFinishedException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Poll finished");
+        } catch (NotTheOwnerException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the poll's owner");
         }
     }
 
     @RequestMapping(value = "/api/meeting/{id}/cancel", method = RequestMethod.POST)
     public ResponseEntity cancelMeeting (HttpServletRequest req, @PathVariable String id) {
 
-        if(MeetingServices.cancelMeeting(id)) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
+        try {
+            MeetingServices.cancelMeeting(Integer.parseInt(userId), id);
             return ResponseEntity.ok("deleted");
-        }
-        else {
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem id accessing DB");
+        } catch (NotTheOwnerException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not the poll's owner");
         }
     }
 

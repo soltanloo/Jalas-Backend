@@ -1,27 +1,24 @@
 package Configs;
 
 import DataManagers.DataManager;
+import Services.JWTService;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.servlet.ServletRequestEvent;
+import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 @WebListener()
-public class Listener implements ServletContextListener,
-        HttpSessionListener, HttpSessionAttributeListener {
+public class Listener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener, ServletRequestListener {
 
     private ScheduledExecutorService scheduler;
 
-    public Listener() {
-    }
-
+    @Override
     public void contextInitialized(ServletContextEvent sce) {
         System.out.println("Starting up!");
         try {
@@ -33,22 +30,19 @@ public class Listener implements ServletContextListener,
         scheduler.scheduleAtFixedRate(new PeriodRoomCheck(), 1, 1, TimeUnit.MINUTES);
     }
 
+    @Override
+    public void requestInitialized(ServletRequestEvent event) {
+        HttpServletRequest req = (HttpServletRequest) event.getServletRequest();
+        String userId = JWTService.decodeUserIdJWT(req.getHeader("userToken"));
+        if (userId == null)
+            req.setAttribute("userId", "");
+        else
+            req.setAttribute("userId", userId);
+    }
+
+    @Override
     public void contextDestroyed(ServletContextEvent sce) {
         scheduler.shutdownNow();
     }
 
-    public void sessionCreated(HttpSessionEvent se) {
-    }
-
-    public void sessionDestroyed(HttpSessionEvent se) {
-    }
-
-    public void attributeAdded(HttpSessionBindingEvent sbe) {
-    }
-
-    public void attributeRemoved(HttpSessionBindingEvent sbe) {
-    }
-
-    public void attributeReplaced(HttpSessionBindingEvent sbe) {
-    }
 }

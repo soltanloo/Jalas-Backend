@@ -7,6 +7,8 @@ public class UserSeed {
             "            \"firstName\": \"Lilia\",\n" +
             "            \"lastName\": \"Mccall\",\n" +
             "            \"email\": \"chrystalmcleod@zenolux.com\",\n" +
+            "            \"isLoggedIn\": \"0\",\n" +
+            "            \"password\": \"1234\",\n" +
             "            \"createdPollIds\": [\n" +
             "        {\n" +
             "            \"id\": 0\n" +
@@ -39,6 +41,8 @@ public class UserSeed {
             "            \"firstName\": \"Moreno\",\n" +
             "            \"lastName\": \"Avila\",\n" +
             "            \"email\": \"huffphelps@pharmacon.com\",\n" +
+            "            \"isLoggedIn\": \"0\",\n" +
+            "            \"password\": \"12345\",\n" +
             "            \"createdPollIds\": [\n" +
             "        {\n" +
             "            \"id\": 3\n" +
@@ -89,6 +93,8 @@ public class UserSeed {
             "            \"firstName\": \"Luisa\",\n" +
             "            \"lastName\": \"Richardson\",\n" +
             "            \"email\": \"mariannesims@comtrail.com\",\n" +
+            "            \"isLoggedIn\": \"0\",\n" +
+            "            \"password\": \"123456\",\n" +
             "            \"createdPollIds\": [\n" +
             "        {\n" +
             "            \"id\": 6\n" +
@@ -130,6 +136,8 @@ public class UserSeed {
             "            \"firstName\": \"Iva\",\n" +
             "            \"lastName\": \"Gonzalez\",\n" +
             "            \"email\": \"rastin30@gmail.com\",\n" +
+            "            \"isLoggedIn\": \"0\",\n" +
+            "            \"password\": \"1234567\",\n" +
             "            \"createdPollIds\": [\n" +
             "    ],\n" +
             "        \"invitedPollIds\": [\n" +

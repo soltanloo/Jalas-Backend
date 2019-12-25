@@ -48,9 +48,12 @@ public class PollsController {
 
     @RequestMapping (value = "/api/poll", method = RequestMethod.POST)
     public ResponseEntity poll (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
         try {
             JSONObject data = new JSONObject(reqData);
-            Poll poll = PollServices.createPoll(data);
+            Poll poll = PollServices.createPoll(Integer.parseInt(userId), data);
             return ResponseEntity.ok(poll.getId());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -66,9 +69,13 @@ public class PollsController {
 
     @RequestMapping(value = "/api/poll/addOption", method = RequestMethod.POST)
     public ResponseEntity addOption(HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
         try {
             JSONObject data = new JSONObject(reqData);
-            Poll poll = PollServices.addOptionToPoll(data);
+            Poll poll = PollServices.addOptionToPoll(Integer.parseInt(userId), data);
             return ResponseEntity.ok(poll.getId());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -82,11 +89,15 @@ public class PollsController {
         }
     }
 
-    @RequestMapping(value = "/api/poll/removeOption", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/api/poll/removeOption", method = RequestMethod.POST)
     public ResponseEntity removeOption(HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
         try {
             JSONObject data = new JSONObject(reqData);
-            Poll poll = PollServices.removeOptionFromPoll(data);
+            Poll poll = PollServices.removeOptionFromPoll(Integer.parseInt(userId), data);
             return ResponseEntity.ok(poll.getId());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -102,9 +113,13 @@ public class PollsController {
 
     @RequestMapping(value = "/api/poll/addParticipant", method = RequestMethod.POST)
     public ResponseEntity addParticipant (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
         try{
             JSONObject data = new JSONObject(reqData);
-            PollServices.addParticipant(data);
+            PollServices.addParticipant(Integer.parseInt(userId), data);
             return ResponseEntity.ok("Participant added");
         } catch(JSONException e) {
             e.printStackTrace();
@@ -120,9 +135,13 @@ public class PollsController {
 
     @RequestMapping(value = "/api/poll/removeParticipant", method = RequestMethod.POST)
     public ResponseEntity removeParticipant (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
         try{
             JSONObject data = new JSONObject(reqData);
-            PollServices.removeParticipant(data);
+            PollServices.removeParticipant(Integer.parseInt(userId), data);
             return ResponseEntity.ok("Participant removed");
         } catch(JSONException e) {
             e.printStackTrace();
@@ -141,9 +160,13 @@ public class PollsController {
 
     @RequestMapping (value = "/api/vote", method = RequestMethod.POST)
     public ResponseEntity vote (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
         try {
             JSONObject data = new JSONObject(reqData);
-            PollServices.addVote(data);
+            PollServices.addVote(Integer.parseInt(userId), data);
             return ResponseEntity.ok("Vote added");
         } catch (JSONException e) {
             e.printStackTrace();

@@ -6,4 +6,5 @@ module Jalas.Backend {
     requires spring.web;
     requires javax.servlet.api;
     requires commons.dbcp;
+    requires java.jwt;
 }

@@ -2,6 +2,7 @@ package BusinessLogic;
 
 import DataManagers.MeetingDataHandler;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.NotTheOwnerException;
 import ErrorClasses.PollFinishedException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
@@ -17,13 +18,16 @@ public class MeetingServices {
 
     private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
-    public static Meeting  addMeeting(JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException, PollFinishedException {
+    public static Meeting addMeeting(int userId, JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException, PollFinishedException, NotTheOwnerException {
         Timestamp timestamp = new Timestamp(System.currentTimeMillis());
 
         Poll poll = PollServices.getPoll(data.getInt("pollId"));
 
         if (!poll.isOngoing())
             throw new PollFinishedException();
+        if (poll.getOwnerId() != userId)
+            throw new NotTheOwnerException();
+
         Meeting meeting = new Meeting();
 
         meeting.setRoomNumber(data.getInt("roomNumber"));
@@ -34,13 +38,12 @@ public class MeetingServices {
         meeting.setInvitedUserIds(poll.getInvitedUserIds());
         meeting.setCreateTime(sdf.format(timestamp));
 
-
         if(MeetingDataHandler.addMeeting(meeting)) {
             UserServices.addUserCreatedMeeting(poll.getOwnerId(), meeting.getId());
             PollServices.unsetOngoingStatus(poll);
 
-            for (int userId : poll.getInvitedUserIds()) {
-                UserServices.addUserInvitedMeeting(userId, meeting.getId());
+            for (int invUserId : poll.getInvitedUserIds()) {
+                UserServices.addUserInvitedMeeting(invUserId, meeting.getId());
             }
             String content = "New Meeting has been arranged!\n" +
                     "api/meeting/" + meeting.getId();
@@ -59,8 +62,11 @@ public class MeetingServices {
         }
     }
 
-    public static boolean cancelMeeting(String meetingId) {
-        return MeetingDataHandler.cancelMeeting(Integer.parseInt(meetingId));
+    public static void cancelMeeting(int userId, String meetingId) throws DataBaseErrorException, NotTheOwnerException {
+        Meeting meeting = MeetingDataHandler.getMeeting(Integer.parseInt(meetingId));
+        if(meeting.getOwnerId() != userId)
+            throw new NotTheOwnerException();
+        MeetingDataHandler.cancelMeeting(meeting.getId());
     }
 
     public static Meeting getMeeting(String id) throws DataBaseErrorException {

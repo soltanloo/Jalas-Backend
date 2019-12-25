@@ -13,7 +13,35 @@ public class User {
     private List<Integer> invitedPollIds = new ArrayList<>();
     private List<Integer> createdMeetingIds = new ArrayList<>();
     private List<Integer> invitedMeetingIds = new ArrayList<>();
+    private boolean isLoggedIn = false;
+    private String password;
+    private String role;
 
+    public User() {
+        id = count;
+        count++;
+    }
+
+
+    public String getRole() { return role;}
+
+    public void setRole(String role) { this.role = role;}
+
+    public String getPassword () {
+        return password;
+    }
+
+    public void setPassword (String password) {
+        this.password = password;
+    }
+
+    public boolean isLoggedIn () {
+        return isLoggedIn;
+    }
+
+    public void setLoggedIn (boolean loggedIn) {
+        isLoggedIn = loggedIn;
+    }
 
     public List<Integer> getCreatedPollIds() {
         return createdPollIds;

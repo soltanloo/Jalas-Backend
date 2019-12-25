@@ -24,8 +24,7 @@ public class PollServices {
         return PollDataHandler.getPoll(id);
     }
 
-    public static void addVote(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException, DuplicateVoteException, PollFinishedException {
-        int userID = data.getInt("userId");
+    public static void addVote(int userId, JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException, DuplicateVoteException, PollFinishedException {
         int pollID = data.getInt("pollId");
         int optionID = data.getInt("optionId");
 
@@ -38,21 +37,20 @@ public class PollServices {
             throw new PollFinishedException();
         if(!poll.doesContaintOption(option.getId()))
             throw new AccessViolationException();
-        if(!poll.isUserInvited(userID))
+        if(!poll.isUserInvited(userId))
             throw new AccessViolationException();
 
-        boolean status = option.addVote(userID);
+        boolean status = option.addVote(userId);
         if(!status)
             throw new DuplicateVoteException();
         PollOptionDataHandler.updateUserIDList(option);
-        UserServices.notifyNewVote(userID, pollID);
+        UserServices.notifyNewVote(userId, pollID);
     }
 
-    public static void addParticipant(JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+    public static void addParticipant(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
         String userEmail = data.getString("userEmail");
         int pollId = data.getInt("pollId");
-        int ownerId = data.getInt("userId");
-        User owner = UserDataHandler.getUser(ownerId);
+        User owner = UserDataHandler.getUser(userId);
         User user = UserDataHandler.getUserByEmail(userEmail);
         Poll poll = PollDataHandler.getPoll(pollId);
 
@@ -74,11 +72,10 @@ public class PollServices {
 
     }
 
-    public static void removeParticipant(JSONObject data) throws DataBaseErrorException, AccessViolationException, JSONException, UserWasNotInvitedException {
+    public static void removeParticipant(int userId, JSONObject data) throws DataBaseErrorException, AccessViolationException, JSONException, UserWasNotInvitedException {
         String userEmail = data.getString("userEmail");
         int pollId = data.getInt("pollId");
-        int ownerId = data.getInt("userId");
-        User owner = UserDataHandler.getUser(ownerId);
+        User owner = UserDataHandler.getUser(userId);
         User user = UserDataHandler.getUserByEmail(userEmail);
         Poll poll = PollDataHandler.getPoll(pollId);
 
@@ -99,16 +96,15 @@ public class PollServices {
     }
 
 
-    public static Poll createPoll(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException {
-        int userID = data.getInt("userID");
-        User user = UserDataHandler.getUser(userID);
+    public static Poll createPoll(int userId, JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException {
+        User user = UserDataHandler.getUser(userId);
         if (user == null) {
             throw new ObjectNotFoundInDBException();
         }
         Poll poll = new Poll();
         poll.setTitle(data.getString("title"));
         poll.setOngoing(true);
-        poll.setOwnerId(userID);
+        poll.setOwnerId(userId);
 
         ArrayList<PollOption> options = new ArrayList<>();
         JSONArray jOptions = data.getJSONArray("options");
@@ -125,10 +121,9 @@ public class PollServices {
         return poll;
     }
 
-    public static Poll addOptionToPoll(JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+    public static Poll addOptionToPoll(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
         int pollId = data.getInt("pollId");
-        int ownerId = data.getInt("userId");
-        User owner = UserDataHandler.getUser(ownerId);
+        User owner = UserDataHandler.getUser(userId);
         Poll poll = PollDataHandler.getPoll(pollId);
 
         if (owner == null || poll == null)
@@ -145,11 +140,10 @@ public class PollServices {
         return poll;
     }
 
-    public static Poll removeOptionFromPoll(JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+    public static Poll removeOptionFromPoll(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
         int pollId = data.getInt("pollId");
-        int ownerId = data.getInt("userId");
         int pollOptionId = data.getInt("optionId");
-        User owner = UserDataHandler.getUser(ownerId);
+        User owner = UserDataHandler.getUser(userId);
         Poll poll = PollDataHandler.getPoll(pollId);
 
         if (owner == null || poll == null)

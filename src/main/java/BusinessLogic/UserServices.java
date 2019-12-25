@@ -1,9 +1,15 @@
 package BusinessLogic;
 
+import DataManagers.DataManager;
 import DataManagers.UserDataHandler;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.NoSuchUsernameException;
+import ErrorClasses.WrongPasswordException;
 import Models.User;
 import Services.EmailService;
+import Services.MD5Service;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -54,5 +60,34 @@ public class UserServices {
         String content = "Your vote has been added to Poll with pollID " + pollId;
         content += "http://localhost:8080/api/poll/" + pollId;
         EmailService.sendMail(email, content);
+    }
+
+    public static void signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException {
+        String email = data.getString("email");
+        if (isEmailInvalid(email))
+            throw new NoSuchUsernameException();
+        String password = MD5Service.changeToMd5(data.getString("password"));
+        if (isPasswordCorrect(email, password)) {
+            userLogin(email);
+        } else
+            throw new WrongPasswordException();
+    }
+
+    private static boolean isPasswordCorrect (String email, String password) {
+        return UserDataHandler.checkPasswordCorrectness(email, password);
+    }
+
+    private static boolean isEmailInvalid (String email) {
+        try {
+            User dupUser = UserDataHandler.getUserByEmail(email);
+            return dupUser == null;
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    private static void userLogin (String email) {
+        UserDataHandler.userLogin(email);
     }
 }
