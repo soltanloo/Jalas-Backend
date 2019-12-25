@@ -1,6 +1,7 @@
 package DataManagers;
 
 import ErrorClasses.DataBaseErrorException;
+import Models.Comment;
 import Models.Poll;
 import Models.PollOption;
 import org.json.JSONArray;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
  */
 
 public class PollDataHandler {
-    private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds)";
+    private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds, comments)";
 
     public static void init() {
         DataManager.dropExistingTable("Poll");
@@ -34,7 +35,8 @@ public class PollDataHandler {
                     "options TEXT, " +
                     "isOngoing INTEGER, " +
                     "ownerId INTEGER, " +
-                    "invitedUserIds TEXT)";
+                    "invitedUserIds TEXT, " +
+                    "comments TEXT)";
             st.executeUpdate(sql);
             st.close();
         } catch (SQLException e) {
@@ -44,7 +46,7 @@ public class PollDataHandler {
     }
 
     public static boolean addPoll(Poll poll) {
-        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -168,6 +170,24 @@ public class PollDataHandler {
         }
     }
 
+    public static void updateComments(Poll poll) throws DataBaseErrorException {
+        String sql = "UPDATE Poll SET comments = ? WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, DataHelpers.stringify(poll.getCommentIds()));
+            stmt.setInt(2, poll.getId());
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static void pollDomainToDB(Poll poll,  PreparedStatement st) {
         try {
             st.setInt(1, poll.getId());
@@ -179,6 +199,7 @@ public class PollDataHandler {
                 st.setInt(4, 0);
             st.setInt(5, poll.getOwnerId());
             st.setString(6, DataHelpers.stringify(poll.getInvitedUserIds()));
+            st.setString(7, DataHelpers.stringify(poll.getCommentIds()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -189,16 +210,23 @@ public class PollDataHandler {
             Poll poll = new Poll();
             poll.setId(rs.getInt("id"));
             poll.setTitle(rs.getString("title"));
-            ArrayList<PollOption> pollOptions = new ArrayList<>();
-            String userList = rs.getString("options");
-            for(int id : DataHelpers.makeList(userList)) {
-                pollOptions.add(PollOptionDataHandler.getPollOption(id));
-
-            }
-            poll.setOptions(pollOptions);
             poll.setOngoing(rs.getInt("isOngoing") == 1);
             poll.setOwnerId(rs.getInt("ownerId"));
             poll.setInvitedUserIds(DataHelpers.makeList(rs.getString("invitedUserIds")));
+
+            ArrayList<PollOption> pollOptions = new ArrayList<>();
+            String userList = rs.getString("options");
+            for (int id : DataHelpers.makeList(userList))
+                pollOptions.add(PollOptionDataHandler.getPollOption(id));
+            poll.setOptions(pollOptions);
+
+
+            ArrayList<Comment> comments = new ArrayList<>();
+            String commentList = rs.getString("comments");
+            for (int id : DataHelpers.makeList(commentList))
+                comments.add(CommentDataHandler.getComment(id));
+            poll.setComments(comments);
+
             return poll;
         } catch(SQLException e) {
             e.printStackTrace();

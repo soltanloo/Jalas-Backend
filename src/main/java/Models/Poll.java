@@ -8,11 +8,28 @@ public class Poll {
     private static int count = 0;
     private int id;
     private String title;
-    private ArrayList<PollOption> options;
+    private ArrayList<PollOption> options = new ArrayList<>();
+    private ArrayList<Comment> comments = new ArrayList<>();
     private boolean isOngoing;
     private int ownerId;
     private ArrayList<Integer> invitedUserIds = new ArrayList<>();
 
+    public Poll(){
+        this.id = count++;
+    }
+
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+    }
+
+    public void addComment(Comment comment) {
+        comments.add(comment);
+    }
 
     public int getOwnerId() {
         return ownerId;
@@ -60,10 +77,6 @@ public class Poll {
         this.title = title;
     }
 
-    public Poll(){
-        this.id = count++;
-    }
-
     public int getId(){
         return id;
     }
@@ -75,9 +88,18 @@ public class Poll {
     public ArrayList<Integer> getOptionsIDs() {
         ArrayList<Integer> retList = new ArrayList<>();
 
-        for(PollOption pollOption : this.options) {
+        for(PollOption pollOption : this.options)
             retList.add(pollOption.getId());
-        }
+
+        return retList;
+    }
+
+    public ArrayList<Integer> getCommentIds() {
+        ArrayList<Integer> retList = new ArrayList<>();
+
+        for (Comment comment : this.comments)
+            retList.add(comment.getId());
+
         return retList;
     }
 
@@ -114,4 +136,10 @@ public class Poll {
             }
     }
 
+    public boolean doesContaintComment(int commentId) {
+        for (Comment comment : comments)
+            if (comment.getId() == commentId)
+                return true;
+        return false;
+    }
 }

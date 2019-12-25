@@ -1,5 +1,6 @@
 package Controllers;
 
+import BusinessLogic.CommentServices;
 import BusinessLogic.PollServices;
 import ErrorClasses.*;
 import Models.Poll;
@@ -49,7 +50,7 @@ public class PollsController {
     @RequestMapping (value = "/api/poll", method = RequestMethod.POST)
     public ResponseEntity poll (HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");
-        if (userId == "")
+        if (userId.equals(""))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
         try {
             JSONObject data = new JSONObject(reqData);
@@ -70,7 +71,7 @@ public class PollsController {
     @RequestMapping(value = "/api/poll/addOption", method = RequestMethod.POST)
     public ResponseEntity addOption(HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");
-        if (userId == "")
+        if (userId.equals(""))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
 
         try {
@@ -92,7 +93,7 @@ public class PollsController {
     @RequestMapping(value = "/api/poll/removeOption", method = RequestMethod.POST)
     public ResponseEntity removeOption(HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");
-        if (userId == "")
+        if (userId.equals(""))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
 
         try {
@@ -114,7 +115,7 @@ public class PollsController {
     @RequestMapping(value = "/api/poll/addParticipant", method = RequestMethod.POST)
     public ResponseEntity addParticipant (HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");
-        if (userId == "")
+        if (userId.equals(""))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
 
         try{
@@ -136,7 +137,7 @@ public class PollsController {
     @RequestMapping(value = "/api/poll/removeParticipant", method = RequestMethod.POST)
     public ResponseEntity removeParticipant (HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");
-        if (userId == "")
+        if (userId.equals(""))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
 
         try{
@@ -161,7 +162,7 @@ public class PollsController {
     @RequestMapping (value = "/api/vote", method = RequestMethod.POST)
     public ResponseEntity vote (HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");
-        if (userId == "")
+        if (userId.equals(""))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
 
         try {
@@ -186,6 +187,34 @@ public class PollsController {
         } catch (PollFinishedException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Poll finished");
+        }
+    }
+
+    @PostMapping(value = "/api/poll/comment")
+    public ResponseEntity addComment (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId.equals(""))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
+        try {
+            JSONObject data = new JSONObject(reqData);
+            CommentServices.addComment(Integer.parseInt(userId), data);
+            return ResponseEntity.ok("Comment added");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");
+        } catch (ObjectNotFoundInDBException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Poll not found");
+        } catch (NoCommentWithThisId e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment to reply not found");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (UserWasNotInvitedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You are not invited");
         }
     }
 }

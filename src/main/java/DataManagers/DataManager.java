@@ -22,12 +22,12 @@ public class DataManager {
         PollDataHandler.init();
         PollOptionDataHandler.init();
         UserDataHandler.init();
+        CommentDataHandler.init();
         addSeedUsers();
         //DataManager.addSeedPolls();
     }
 
     private static void addSeedPolls () throws JSONException{
-
         JSONObject file = new JSONObject(PollSeed.pollSeed);
         PollDataHandler.createSeedPolls(file.getJSONArray("polls"));
     }

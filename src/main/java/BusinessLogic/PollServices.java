@@ -159,6 +159,8 @@ public class PollServices {
         PollOptionDataHandler.removeOption(pollOptionId);
         PollDataHandler.updateOptions(poll);
 
+        UserServices.notifyDeletedOption(poll.getInvitedUserIds(), poll.getId());
+
         return poll;
     }
 

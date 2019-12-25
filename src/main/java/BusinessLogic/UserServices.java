@@ -55,6 +55,15 @@ public class UserServices {
         }
     }
 
+    public static void notifyDeletedOption(ArrayList<Integer> userIds, Integer pollId) throws DataBaseErrorException {
+        for (Integer id : userIds) {
+            String email = getUserEmail(id);
+            String content = "An Option for one of the participating polls was Deleted :\n";
+            content += "http://localhost:8080/api/poll/" + pollId;
+            EmailService.sendMail(email, content);
+        }
+    }
+
     public static void notifyNewVote(int userId, int pollId) throws DataBaseErrorException {
         String email = getUserEmail(userId);
         String content = "Your vote has been added to Poll with pollID " + pollId;
