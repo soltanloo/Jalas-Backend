@@ -24,7 +24,7 @@ public class Authentication {
             JSONObject data = new JSONObject(requestBody);
             UserServices.signIn(data);
             String token = JWTService.createJWT(data.getString("email"));
-            return ResponseEntity.status(HttpStatus.OK).header("userToken", token).body("Logged in");
+            return ResponseEntity.status(HttpStatus.OK).header("user-token", token).body("Logged in");
         } catch (NoSuchUsernameException | WrongPasswordException | JSONException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Credentials are incorrect");
