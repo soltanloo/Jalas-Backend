@@ -9,6 +9,7 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.*;
+import java.util.Enumeration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,7 @@ public class Listener implements ServletContextListener, HttpSessionListener, Ht
     @Override
     public void requestInitialized(ServletRequestEvent event) {
         HttpServletRequest req = (HttpServletRequest) event.getServletRequest();
-        String userId = JWTService.decodeUserIdJWT(req.getHeader("userToken"));
+        String userId = JWTService.decodeUserIdJWT(req.getHeader("user-token"));
         if (userId == null)
             req.setAttribute("userId", "");
         else
