@@ -112,6 +112,8 @@ public class Poll {
     }
 
     public boolean isUserInvited(int userID) {
+        if (userID == ownerId)
+            return true;
         for (int id : invitedUserIds) {
             if(id == userID)
                 return true;

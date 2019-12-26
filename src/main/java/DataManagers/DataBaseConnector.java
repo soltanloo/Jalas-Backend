@@ -1,6 +1,5 @@
 package DataManagers;
 
-import org.apache.commons.dbcp.BasicDataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,6 @@ public class DataBaseConnector implements DBConnectionPool{
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-//        createDatabaseIfNotExists();
 
         List<Connection> pool = new ArrayList<>(INITIAL_POOL_SIZE);
         for (int i = 0; i < INITIAL_POOL_SIZE; i++) {
@@ -38,17 +36,6 @@ public class DataBaseConnector implements DBConnectionPool{
         this.sem = new Semaphore(1);
         connectionPool = pool;
     }
-
-//    private static void createDatabaseIfNotExists() {
-//        Connection conn;
-//        try {
-//            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "root");
-//            Statement s = conn.createStatement();
-//            s.executeUpdate("CREATE DATABASE IF NOT EXISTS jaboonjaDB;");
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     public static Connection getConnection() {
         return DBConPool.getPoolConnection();
