@@ -168,4 +168,17 @@ public class PollServices {
     public static void unsetOngoingStatus(Poll poll) throws DataBaseErrorException {
         PollDataHandler.unsetOngoingStatus(poll.getId());
     }
+
+    public static ArrayList<Poll> getUserPolls(int userId) throws DataBaseErrorException {
+        User user = UserServices.getUser(userId);
+
+        ArrayList<Poll> polls = new ArrayList<>();
+        for (int pollId : user.getCreatedPollIds())
+            polls.add(getPoll(pollId));
+
+        for (int pollId : user.getInvitedPollIds())
+            polls.add(getPoll(pollId));
+
+        return polls;
+    }
 }

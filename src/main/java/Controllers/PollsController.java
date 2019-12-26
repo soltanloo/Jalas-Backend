@@ -17,14 +17,24 @@ import java.util.ArrayList;
 public class PollsController {
     @RequestMapping (value = "/api/poll", method = RequestMethod.GET)
     public ResponseEntity getPolls (HttpServletRequest req) {
+        String filterType = req.getHeader("filter-type");
+        String userId = "";
 
-        ArrayList<Poll> polls = null;
+        if (filterType.equals("local")) {
+            userId = (String) req.getAttribute("userId");
+            if (userId.equals(""))
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+        }
+
+        ArrayList<Poll> polls;
         try {
-            polls = PollServices.getAllPolls();
-            if (polls != null)
-                return ResponseEntity.ok(polls);
+            if (filterType.equals("global"))
+                polls = PollServices.getAllPolls();
+            else if (filterType.equals("local"))
+                polls = PollServices.getUserPolls(Integer.parseInt(userId));
             else
-                return new ResponseEntity<>("Couldn't fetch polls list from server!", HttpStatus.INTERNAL_SERVER_ERROR);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Unknown filter type");
+            return ResponseEntity.ok(polls);
         } catch (DataBaseErrorException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
@@ -52,6 +62,7 @@ public class PollsController {
         String userId = (String) req.getAttribute("userId");
         if (userId.equals(""))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
         try {
             JSONObject data = new JSONObject(reqData);
             Poll poll = PollServices.createPoll(Integer.parseInt(userId), data);

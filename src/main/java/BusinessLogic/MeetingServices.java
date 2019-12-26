@@ -7,12 +7,14 @@ import ErrorClasses.PollFinishedException;
 import ErrorClasses.RoomReservationErrorException;
 import Models.Meeting;
 import Models.Poll;
+import Models.User;
 import Services.EmailService;
 import Services.RoomReservationService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 
 public class MeetingServices {
 
@@ -71,5 +73,25 @@ public class MeetingServices {
 
     public static Meeting getMeeting(String id) throws DataBaseErrorException {
         return MeetingDataHandler.getMeeting(Integer.parseInt(id));
+    }
+
+    public static Meeting getMeeting(int id) throws DataBaseErrorException {
+        return MeetingDataHandler.getMeeting(id);
+    }
+
+    public static ArrayList<Meeting> getAllMeetings() throws DataBaseErrorException {
+        return MeetingDataHandler.getAllMeetings();
+    }
+
+    public static ArrayList<Meeting> getUserMeetings(int userId) throws DataBaseErrorException {
+        User user = UserServices.getUser(userId);
+
+        ArrayList<Meeting> meetings = new ArrayList<>();
+        for (int meetingId : user.getCreatedMeetingIds())
+            meetings.add(getMeeting(meetingId));
+        for (int meetingId : user.getInvitedMeetingIds())
+            meetings.add(getMeeting(meetingId));
+
+        return meetings;
     }
 }

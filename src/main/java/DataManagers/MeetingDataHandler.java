@@ -2,6 +2,7 @@ package DataManagers;
 
 import ErrorClasses.DataBaseErrorException;
 import Models.Meeting;
+import Models.Poll;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -85,6 +86,29 @@ public class MeetingDataHandler {
             rs.close();
             DataBaseConnector.releaseConnection(con);
             return meeting;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
+    public static ArrayList<Meeting> getAllMeetings() throws DataBaseErrorException {
+        String sql = "SELECT * FROM Meeting";
+        Connection con = DataBaseConnector.getConnection();
+        ArrayList<Meeting> meetings = new ArrayList<>();
+        try {
+            Statement stmt = con.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            while (rs.next()) {
+                meetings.add(meetingDBtoDomain(rs));
+            }
+
+            stmt.close();
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return meetings;
         } catch (SQLException e) {
             e.printStackTrace();
             DataBaseConnector.releaseConnection(con);

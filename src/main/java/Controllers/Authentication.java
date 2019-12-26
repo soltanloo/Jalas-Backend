@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class Authentication {
 
-    @PostMapping(value = "api/login")
+    @PostMapping(value = "/api/login")
     public ResponseEntity SignInUser (@RequestBody String requestBody) {
         try {
             JSONObject data = new JSONObject(requestBody);

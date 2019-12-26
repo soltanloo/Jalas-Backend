@@ -84,9 +84,9 @@ public class PollDataHandler {
             return polls;
         } catch (SQLException e) {
             e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
         }
-        DataBaseConnector.releaseConnection(con);
-        return null;
     }
 
     public static Poll getPoll(int id) throws DataBaseErrorException {
