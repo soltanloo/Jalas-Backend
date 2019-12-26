@@ -85,6 +85,10 @@ public class UserServices {
         return Integer.toString(userId);
     }
 
+    public static String getUserName(int userId) throws DataBaseErrorException {
+        return UserDataHandler.getUserName(userId);
+    }
+
     private static boolean isPasswordCorrect (String email, String password) {
         return UserDataHandler.checkPasswordCorrectness(email, password);
     }
@@ -102,4 +106,5 @@ public class UserServices {
     private static void userLogin (String email) {
         UserDataHandler.userLogin(email);
     }
+
 }

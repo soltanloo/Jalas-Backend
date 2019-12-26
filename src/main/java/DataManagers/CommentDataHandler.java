@@ -15,7 +15,7 @@ import Models.Comment;
 import java.sql.*;
 
 public class CommentDataHandler {
-    private static final String COLUMNS = "(id, containingText, isReply, commentedPollId, repliedCommentId, commenterId, repliedComments)";
+    private static final String COLUMNS = "(id, containingText, isReply, commentedPollId, repliedCommentId, commenterId, commenterName, repliedComments)";
 
     public static void init() {
         DataManager.dropExistingTable("Comment");
@@ -31,6 +31,7 @@ public class CommentDataHandler {
                     "commentedPollId INTEGER, " +
                     "repliedCommentId INTEGER, " +
                     "commenterId INTEGER, " +
+                    "commenterName TEXT, " +
                     "repliedComments TEXT)";
             st.executeUpdate(sql);
             st.close();
@@ -41,7 +42,7 @@ public class CommentDataHandler {
     }
 
     public static void addComment(Comment comment) throws DataBaseErrorException {
-        String sql = "INSERT INTO Comment " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Comment " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -110,7 +111,8 @@ public class CommentDataHandler {
         st.setInt(4, comment.getCommentedPollId());
         st.setInt(5, comment.getRepliedCommentId());
         st.setInt(6, comment.getCommenterId());
-        st.setString(7, DataHelpers.stringify(comment.getRepliedCommentsIds()));
+        st.setString(7, comment.getCommenterName());
+        st.setString(8, DataHelpers.stringify(comment.getRepliedCommentsIds()));
     }
 
     private static Comment commentDBtoDomain(ResultSet rs) throws SQLException, DataBaseErrorException {
@@ -124,6 +126,7 @@ public class CommentDataHandler {
         comment.setCommentedPollId(rs.getInt("commentedPollId"));
         comment.setRepliedCommentId(rs.getInt("repliedCommentId"));
         comment.setCommenterId(rs.getInt("commenterId"));
+        comment.setCommenterName(rs.getString("commenterName"));
 
         for (int cmId : DataHelpers.makeList(rs.getString("repliedComments")))
             comment.addRepliedComment(getComment(cmId));

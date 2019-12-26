@@ -34,6 +34,7 @@ public class CommentServices {
 
         Comment newComment = new Comment();
         newComment.setCommenterId(userId);
+        newComment.setCommenterName(UserServices.getUserName(userId));
         newComment.setRepliedCommentId(repliedCommentId);
         newComment.setCommentedPollId(poll.getId());
         newComment.setReply(isReply);

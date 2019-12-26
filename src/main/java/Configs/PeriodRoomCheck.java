@@ -1,6 +1,5 @@
 package Configs;
 
-import DataManagers.DataManager;
 import DataManagers.MeetingDataHandler;
 import Models.Meeting;
 import Services.RoomReservationService;

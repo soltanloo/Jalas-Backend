@@ -10,6 +10,7 @@ public class Comment {
     private int commentedPollId;
     private int repliedCommentId = -1;
     private int commenterId;
+    private String commenterName;
     private ArrayList<Comment> repliedComments = new ArrayList<>();
 
     public Comment() {id = count; count += 1;}
@@ -32,6 +33,14 @@ public class Comment {
         for (Comment comment : repliedComments)
             retList.add(comment.getId());
         return retList;
+    }
+
+    public String getCommenterName() {
+        return commenterName;
+    }
+
+    public void setCommenterName(String commenterName) {
+        this.commenterName = commenterName;
     }
 
     public int getCommentedPollId() {

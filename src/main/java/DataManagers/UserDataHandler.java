@@ -206,6 +206,27 @@ public class UserDataHandler {
         }
     }
 
+    public static String getUserName(int id) throws DataBaseErrorException {
+        String sql = "SELECT firstName, lastName FROM User WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+            String name = rs.getString("firstName") + " " + rs.getString("lastName");
+
+            stmt.close();
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return name;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static boolean checkPasswordCorrectness (String email, String password) {
         String sql = "SELECT password FROM USER WHERE email = ?";
         Connection con = DataBaseConnector.getConnection();
