@@ -74,8 +74,14 @@ public class Meeting {
     public Status getStatus(){
         return status;
     }
+
     public void setStatus(int levelCode){
-        this.status.setStatus(levelCode);
+        if (levelCode == 1)
+            this.status = Status.SET;
+        else if (levelCode == 0)
+            this.status = Status.STALLED;
+        else
+            this.status = Status.CANCELLED;
     }
     public void setId(int id) {
         this.id = id;
