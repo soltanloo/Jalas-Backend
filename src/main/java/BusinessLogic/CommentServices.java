@@ -39,8 +39,15 @@ public class CommentServices {
         newComment.setReply(isReply);
         newComment.setContainingText(data.getString("text"));
 
-        poll.addComment(newComment);
         CommentDataHandler.addComment(newComment);
-        PollDataHandler.updateComments(poll);
+        if (isReply) {
+            Comment repliedTo = CommentDataHandler.getComment(repliedCommentId);
+            repliedTo.addRepliedComment(newComment);
+            CommentDataHandler.updateRepliedList(repliedTo);
+        }
+        else {
+            poll.addComment(newComment);
+            PollDataHandler.updateComments(poll);
+        }
     }
 }

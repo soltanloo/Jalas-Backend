@@ -7,6 +7,8 @@ public class DataHelpers {
     public static String stringify(List<Integer> list) {
         String rs = "";
         boolean isFirst = true;
+        if (list.size() == 0)
+            return rs;
         for (int s : list) {
             if(isFirst) {
                 rs = s + ",";

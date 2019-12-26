@@ -22,10 +22,10 @@ public class Authentication {
     public ResponseEntity SignInUser (@RequestBody String requestBody) {
         try {
             JSONObject data = new JSONObject(requestBody);
-            UserServices.signIn(data);
-            String token = JWTService.createJWT(data.getString("email"));
+            String userId = UserServices.signIn(data);
+            String token = JWTService.createJWT(userId);
             return ResponseEntity.status(HttpStatus.OK).header("user-token", token).body("Logged in");
-        } catch (NoSuchUsernameException | WrongPasswordException | JSONException e) {
+        } catch (NoSuchUsernameException | WrongPasswordException | JSONException | DataBaseErrorException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Credentials are incorrect");
         }

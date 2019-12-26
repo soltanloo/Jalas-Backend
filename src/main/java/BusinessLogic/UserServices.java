@@ -71,28 +71,31 @@ public class UserServices {
         EmailService.sendMail(email, content);
     }
 
-    public static void signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException {
+    public static String signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException, DataBaseErrorException {
         String email = data.getString("email");
-        if (isEmailInvalid(email))
+        int userId = getUserIdByEmail(email);
+        if (userId == -1)
             throw new NoSuchUsernameException();
+
         String password = MD5Service.changeToMd5(data.getString("password"));
         if (isPasswordCorrect(email, password)) {
             userLogin(email);
         } else
             throw new WrongPasswordException();
+        return Integer.toString(userId);
     }
 
     private static boolean isPasswordCorrect (String email, String password) {
         return UserDataHandler.checkPasswordCorrectness(email, password);
     }
 
-    private static boolean isEmailInvalid (String email) {
+    private static int getUserIdByEmail (String email) {
         try {
-            User dupUser = UserDataHandler.getUserByEmail(email);
-            return dupUser == null;
-        } catch (DataBaseErrorException e) {
+            User user = UserDataHandler.getUserByEmail(email);
+            return user.getId();
+        } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return -1;
         }
     }
 

@@ -7,15 +7,15 @@ package DataManagers;
 //private int commentedPollId;
 //private int repliedCommentId = -1;
 //private int commenterId;
+//private ArrayList<Comment> repliedComments = new ArrayList<>();
 
 import ErrorClasses.DataBaseErrorException;
 import Models.Comment;
-import Models.Meeting;
 
 import java.sql.*;
 
 public class CommentDataHandler {
-    private static final String COLUMNS = "(id, containingText, isReply, commentedPollId, repliedCommentId, commenterId)";
+    private static final String COLUMNS = "(id, containingText, isReply, commentedPollId, repliedCommentId, commenterId, repliedComments)";
 
     public static void init() {
         DataManager.dropExistingTable("Comment");
@@ -30,7 +30,8 @@ public class CommentDataHandler {
                     "isReply INTEGER, " +
                     "commentedPollId INTEGER, " +
                     "repliedCommentId INTEGER, " +
-                    "commenterId INTEGER)";
+                    "commenterId INTEGER, " +
+                    "repliedComments TEXT)";
             st.executeUpdate(sql);
             st.close();
         } catch (SQLException e) {
@@ -40,7 +41,7 @@ public class CommentDataHandler {
     }
 
     public static void addComment(Comment comment) throws DataBaseErrorException {
-        String sql = "INSERT INTO Comment " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Comment " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -81,6 +82,23 @@ public class CommentDataHandler {
         }
     }
 
+    public static void updateRepliedList(Comment comment) throws DataBaseErrorException {
+        String sql = "UPDATE Comment SET repliedComments = ? WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, DataHelpers.stringify(comment.getRepliedCommentsIds()));
+            stmt.setInt(2, comment.getId());
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
 
     private static void commentDomainToDB(Comment comment, PreparedStatement st) throws SQLException {
         st.setInt(1, comment.getId());
@@ -92,9 +110,10 @@ public class CommentDataHandler {
         st.setInt(4, comment.getCommentedPollId());
         st.setInt(5, comment.getRepliedCommentId());
         st.setInt(6, comment.getCommenterId());
+        st.setString(7, DataHelpers.stringify(comment.getRepliedCommentsIds()));
     }
 
-    private static Comment commentDBtoDomain(ResultSet rs) throws SQLException {
+    private static Comment commentDBtoDomain(ResultSet rs) throws SQLException, DataBaseErrorException {
         Comment comment = new Comment();
         comment.setId(rs.getInt("id"));
         comment.setContainingText(rs.getString("containingText"));
@@ -105,6 +124,9 @@ public class CommentDataHandler {
         comment.setCommentedPollId(rs.getInt("commentedPollId"));
         comment.setRepliedCommentId(rs.getInt("repliedCommentId"));
         comment.setCommenterId(rs.getInt("commenterId"));
+
+        for (int cmId : DataHelpers.makeList(rs.getString("repliedComments")))
+            comment.addRepliedComment(getComment(cmId));
 
         return comment;
     }

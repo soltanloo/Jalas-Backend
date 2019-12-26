@@ -125,12 +125,31 @@ public class UserDataHandler {
         }
     }
 
+    public static int getUserIdByEmail(String email) throws DataBaseErrorException {
+        String sql = "SELECT id FROM User WHERE email = ?";
+        Connection con = DataBaseConnector.getConnection();
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+
+            String userId = rs.getString("id");
+
+            stmt.close();
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return Integer.parseInt(userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     private static void updateList(String sql, String list, int userId) throws DataBaseErrorException {
         Connection con = DataBaseConnector.getConnection();
         try {
-            System.out.println("here");
             PreparedStatement st = con.prepareStatement(sql);
-            System.out.println("here");
             st.setString(1, list);
             st.setInt(2, userId);
             st.executeUpdate();
