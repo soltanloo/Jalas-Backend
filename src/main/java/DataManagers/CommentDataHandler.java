@@ -58,6 +58,23 @@ public class CommentDataHandler {
         DataBaseConnector.releaseConnection(con);
     }
 
+    public static void removeComment(int commentId) throws DataBaseErrorException {
+        String sql = "DELETE FROM Comment WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, commentId);
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static Comment getComment (int id) throws DataBaseErrorException {
         String sql = "SELECT * FROM Comment WHERE id = ?";
         Connection con = DataBaseConnector.getConnection();

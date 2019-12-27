@@ -118,6 +118,8 @@ public class PollServices {
             throw new DataBaseErrorException();
         user.addCreatedPollId(poll.getId());
         UserDataHandler.updateCreatedPollIds(user);
+
+        UserServices.notifyNewPollCreated(user, poll.getId());
         return poll;
     }
 

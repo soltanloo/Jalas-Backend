@@ -71,7 +71,13 @@ public class UserServices {
         EmailService.sendMail(email, content);
     }
 
-    public static String signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException, DataBaseErrorException {
+    public static void notifyNewPollCreated(User user, int pollId) {
+        String content = "You have created a new poll with ID = " + pollId;
+        content += "\nhttp://localhost:8080/api/poll/" + pollId;
+        EmailService.sendMail(user.getEmail(), content);
+    }
+
+    public static String signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException {
         String email = data.getString("email");
         int userId = getUserIdByEmail(email);
         if (userId == -1)
