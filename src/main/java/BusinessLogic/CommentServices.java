@@ -28,7 +28,7 @@ public class CommentServices {
         if (!poll.isUserInvited(userId))
             throw new UserWasNotInvitedException();
         if(isReply) {
-            if (!poll.doesContaintComment(repliedCommentId))
+            if (!poll.doesContainComment(repliedCommentId))
                 throw new NoCommentWithThisId();
         }
 
@@ -50,5 +50,7 @@ public class CommentServices {
             poll.addComment(newComment);
             PollDataHandler.updateComments(poll);
         }
+        poll.addCommentId(newComment.getId());
+        PollDataHandler.updateCommentIds(poll);
     }
 }

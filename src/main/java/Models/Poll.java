@@ -10,6 +10,7 @@ public class Poll {
     private String title;
     private ArrayList<PollOption> options = new ArrayList<>();
     private ArrayList<Comment> comments = new ArrayList<>();
+    private ArrayList<Integer> containingCommentIds = new ArrayList<>();
     private boolean isOngoing;
     private int ownerId;
     private ArrayList<Integer> invitedUserIds = new ArrayList<>();
@@ -18,6 +19,18 @@ public class Poll {
         this.id = count++;
     }
 
+
+    public ArrayList<Integer> getContainingCommentIds() {
+        return containingCommentIds;
+    }
+
+    public void setContainingCommentIds(ArrayList<Integer> containingCommentIds) {
+        this.containingCommentIds = containingCommentIds;
+    }
+
+    public void addCommentId(int id) {
+        containingCommentIds.add(id);
+    }
 
     public ArrayList<Comment> getComments() {
         return comments;
@@ -138,9 +151,9 @@ public class Poll {
             }
     }
 
-    public boolean doesContaintComment(int commentId) {
-        for (Comment comment : comments)
-            if (comment.getId() == commentId)
+    public boolean doesContainComment(int commentId) {
+        for (int cmId : containingCommentIds)
+            if (cmId == commentId)
                 return true;
         return false;
     }
