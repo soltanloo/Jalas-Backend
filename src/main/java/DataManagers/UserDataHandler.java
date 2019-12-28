@@ -259,6 +259,24 @@ public class UserDataHandler {
         DataBaseConnector.releaseConnection(con);
     }
 
+    public static int getNumOfRows() throws DataBaseErrorException {
+        String sql = "SELECT COUNT(id) as num FROM User";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            int numOfRows = rs.getInt("num");
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return numOfRows;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
 
     public static void userDomainToDB(User user, PreparedStatement st) throws DataBaseErrorException {
         try {

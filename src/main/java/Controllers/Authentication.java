@@ -1,7 +1,6 @@
 package Controllers;
 
 import BusinessLogic.UserServices;
-import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.NoSuchUsernameException;
 import ErrorClasses.WrongPasswordException;
 import Services.JWTService;

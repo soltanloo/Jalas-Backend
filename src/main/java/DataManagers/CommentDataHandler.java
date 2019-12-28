@@ -118,6 +118,24 @@ public class CommentDataHandler {
         }
     }
 
+    public static int getNumOfRows() throws DataBaseErrorException {
+        String sql = "SELECT COUNT(id) as num FROM Comment";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            int numOfRows = rs.getInt("num");
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return numOfRows;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     private static void commentDomainToDB(Comment comment, PreparedStatement st) throws SQLException {
         st.setInt(1, comment.getId());
         st.setString(2, comment.getContainingText());

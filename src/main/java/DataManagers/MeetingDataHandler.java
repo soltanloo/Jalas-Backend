@@ -261,6 +261,24 @@ public class MeetingDataHandler {
         }
     }
 
+    public static int getNumOfRows() throws DataBaseErrorException {
+        String sql = "SELECT COUNT(id) as num FROM Meeting";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            ResultSet rs = stmt.executeQuery();
+            int numOfRows = rs.getInt("num");
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return numOfRows;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static void meetingDomainToDB(Meeting meeting,  PreparedStatement st) {
         try {
             st.setInt(1, meeting.getId());
