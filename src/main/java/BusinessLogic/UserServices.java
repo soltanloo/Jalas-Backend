@@ -3,6 +3,7 @@ package BusinessLogic;
 import DataManagers.DataManager;
 import DataManagers.UserDataHandler;
 import ErrorClasses.DataBaseErrorException;
+import ErrorClasses.InvalidEmailAddressException;
 import ErrorClasses.NoSuchUsernameException;
 import ErrorClasses.WrongPasswordException;
 import Models.User;
@@ -51,7 +52,11 @@ public class UserServices {
             String email = getUserEmail(id);
             String content = "New option for one of participating polls was added :\n";
             content += "http://localhost:8080/api/poll/" + pollId;
-            EmailService.sendMail(email, content);
+            try {
+                EmailService.sendMail(email, content);
+            } catch (InvalidEmailAddressException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -60,7 +65,11 @@ public class UserServices {
             String email = getUserEmail(id);
             String content = "An Option for one of the participating polls was Deleted :\n";
             content += "http://localhost:8080/api/poll/" + pollId;
-            EmailService.sendMail(email, content);
+            try {
+                EmailService.sendMail(email, content);
+            } catch (InvalidEmailAddressException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -68,13 +77,21 @@ public class UserServices {
         String email = getUserEmail(userId);
         String content = "Your vote has been added to Poll with pollID " + pollId;
         content += "http://localhost:8080/api/poll/" + pollId;
-        EmailService.sendMail(email, content);
+        try {
+            EmailService.sendMail(email, content);
+        } catch (InvalidEmailAddressException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void notifyNewPollCreated(User user, int pollId) {
         String content = "You have created a new poll with ID = " + pollId;
         content += "\nhttp://localhost:8080/api/poll/" + pollId;
-        EmailService.sendMail(user.getEmail(), content);
+        try {
+            EmailService.sendMail(user.getEmail(), content);
+        } catch (InvalidEmailAddressException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException {

@@ -7,4 +7,5 @@ module Jalas.Backend {
     requires javax.servlet.api;
     requires commons.dbcp;
     requires java.jwt;
+    requires commons.validator;
 }
