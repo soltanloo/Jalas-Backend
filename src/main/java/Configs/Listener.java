@@ -1,8 +1,6 @@
 package Configs;
 
 import DataManagers.DataManager;
-import DataManagers.UserDataHandler;
-import ErrorClasses.DataBaseErrorException;
 import Services.JWTService;
 
 import javax.servlet.ServletContextEvent;
@@ -11,7 +9,6 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.*;
-import java.util.Enumeration;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
