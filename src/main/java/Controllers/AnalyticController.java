@@ -1,6 +1,8 @@
 package Controllers;
 
 import BusinessLogic.AnalyticServices.*;
+import ErrorClasses.AccessViolationException;
+import ErrorClasses.DataBaseErrorException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -15,19 +17,28 @@ import static BusinessLogic.AnalyticServices.*;
 public class AnalyticController {
     @RequestMapping (value = "/api/analytic", method = RequestMethod.GET)
     public ResponseEntity getAnalytics(HttpServletRequest req) {
-        int reservedRoomsNum = getReseverdRoomsNum();
-        int canceledMeetingsNum = getCanceledMeetingsNum();
-//        long creationMeanTime = getCreationMeanTime();
-
-        JSONObject data = new JSONObject();
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
         try {
+            int reservedRoomsNum = getReseverdRoomsNum(Integer.parseInt(userId));
+            int canceledMeetingsNum = getCanceledMeetingsNum(Integer.parseInt(userId));
+            JSONObject data = new JSONObject();
             data.put("reservedRoomsNum", reservedRoomsNum);
             data.put("canceledMeetingsNum", canceledMeetingsNum);
 //            data.put("creationMeanTime", creationMeanTime);
             return ResponseEntity.ok(data.toString());
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         } catch (JSONException e) {
             e.printStackTrace();
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+
     }
 }
