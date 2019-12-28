@@ -19,7 +19,17 @@ public class EmailService {
         return validator.isValid(emailAddress);
     }
 
-    public static void sendMail(String receiverAddress, String content) throws InvalidEmailAddressException {
+    public static void sendMail(String receiverAddress, String content) {
+        new Thread(() -> {
+            try {
+                sendMailAsync(receiverAddress, content);
+            } catch (InvalidEmailAddressException e) {
+                e.printStackTrace();
+            }
+        }).start();
+    }
+
+    private static void sendMailAsync(String receiverAddress, String content) throws InvalidEmailAddressException {
         if (!isEmailValid(receiverAddress))
             throw new InvalidEmailAddressException();
         Properties prop = new Properties();
