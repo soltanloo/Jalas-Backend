@@ -12,6 +12,31 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CommentServices {
+    public static void deleteComment(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, NoCommentWithThisId {
+        int commentId = data.getInt("commentId");
+        int pollId = data.getInt("pollId");
+        Poll poll = PollServices.getPoll(pollId);
+        if(poll == null)
+            throw new ObjectNotFoundInDBException();
+        if(poll.doesContainComment(commentId) == false)
+            throw new NoCommentWithThisId();
+
+        Comment comment = CommentDataHandler.getComment(commentId);
+        if(comment.isReply()){
+            int repliedCommentId = comment.getRepliedCommentId();
+            Comment repliedComment = CommentDataHandler.getComment(repliedCommentId);
+            repliedComment.removeRepliedComment(comment);
+            CommentDataHandler.updateRepliedList(repliedComment);
+        }
+        for(int replyOfCommentId: comment.getRepliedCommentsIds()){
+            poll.deleteComment(replyOfCommentId);
+            CommentDataHandler.removeComment(replyOfCommentId);
+        }
+        poll.deleteComment(commentId);
+        PollDataHandler.updateComments(poll);
+        PollDataHandler.updateCommentIds(poll);
+        CommentDataHandler.removeComment(commentId);
+    }
 
     public static void addComment(int userId, JSONObject data) throws JSONException, ObjectNotFoundInDBException, DataBaseErrorException, UserWasNotInvitedException, NoCommentWithThisId {
         int pollId = data.getInt("pollId");

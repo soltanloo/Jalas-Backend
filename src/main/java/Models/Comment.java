@@ -27,6 +27,7 @@ public class Comment {
     public void addRepliedComment(Comment comment) {
         repliedComments.add(comment);
     }
+    public void removeRepliedComment(Comment comment){ repliedComments.remove(comment);}
 
     public ArrayList<Integer> getRepliedCommentsIds() {
         ArrayList<Integer> retList = new ArrayList<>();

@@ -1,5 +1,7 @@
 package Models;
 
+import ErrorClasses.NoCommentWithThisId;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -114,6 +116,26 @@ public class Poll {
             retList.add(comment.getId());
 
         return retList;
+    }
+
+    public Comment getCommentById(int id) throws NoCommentWithThisId {
+        for(Comment comment: this.comments) {
+            if (comment.getId() == id)
+                return comment;
+        }
+        throw new NoCommentWithThisId();
+    }
+
+    public void deleteComment(int id) throws NoCommentWithThisId {
+        Comment deleteComment = null;
+        for(Comment comment: this.comments) {
+            if (comment.getId() == id)
+              deleteComment = comment;
+        }
+        if(deleteComment == null)
+            throw new NoCommentWithThisId();
+        this.comments.remove(deleteComment);
+        this.containingCommentIds.remove(id);
     }
 
     public boolean doesContaintOption(int optionId) {
