@@ -332,6 +332,7 @@ public class UserDataHandler {
             user.setFirstName(jUser.getString("firstName"));
             user.setLastName(jUser.getString("lastName"));
             user.setEmail(jUser.getString("email"));
+            user.setRole(jUser.getString("role"));
 
             ArrayList<Integer> createdPollIds = new ArrayList<>();
 //            JSONArray jcreatedPollIds = jUser.getJSONArray("createdPollIds");
