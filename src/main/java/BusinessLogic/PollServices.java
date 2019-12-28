@@ -7,7 +7,6 @@ import ErrorClasses.*;
 import Models.Poll;
 import Models.PollOption;
 import Models.User;
-import Services.EmailService;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +34,7 @@ public class PollServices {
 
         if(!poll.isOngoing())
             throw new PollFinishedException();
-        if(!poll.doesContaintOption(option.getId()))
+        if(!poll.doesContainOption(option.getId()))
             throw new AccessViolationException();
         if(!poll.isUserInvited(userId))
             throw new AccessViolationException();
@@ -154,7 +153,7 @@ public class PollServices {
         if (!owner.didCreatedPoll(poll.getId()))
             throw new AccessViolationException();
 
-        if (!poll.doesContaintOption(pollOptionId))
+        if (!poll.doesContainOption(pollOptionId))
             throw new AccessViolationException();
 
         poll.removeOption(pollOptionId);

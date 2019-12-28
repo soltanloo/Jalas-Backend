@@ -134,19 +134,15 @@ public class Poll {
         throw new NoCommentWithThisId();
     }
 
-    public void deleteComment(int id) throws NoCommentWithThisId {
-        Comment deleteComment = null;
-        for(Comment comment: this.comments) {
-            if (comment.getId() == id)
-              deleteComment = comment;
-        }
-        if(deleteComment == null)
-            throw new NoCommentWithThisId();
-        this.comments.remove(deleteComment);
-        this.containingCommentIds.remove(id);
+    public void deleteComment(int id) {
+        for (int i = 0; i < comments.size(); i++)
+            if (comments.get(i).getId() == id) {
+                comments.remove(i);
+                return;
+            }
     }
 
-    public boolean doesContaintOption(int optionId) {
+    public boolean doesContainOption(int optionId) {
         for (PollOption po : options) {
             if(po.getId() == optionId)
                 return true;
