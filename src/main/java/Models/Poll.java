@@ -35,7 +35,11 @@ public class Poll {
     }
 
     public void removeCommentId(int id) {
-        containingCommentIds.remove(id);
+        for (int i = 0; i < containingCommentIds.size(); i++)
+            if (containingCommentIds.get(i) == id) {
+                containingCommentIds.remove(i);
+                return;
+            }
     }
 
     public ArrayList<Comment> getComments() {

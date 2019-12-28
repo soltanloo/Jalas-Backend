@@ -14,20 +14,23 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class CommentServices {
-    public static void deleteComment(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, NoCommentWithThisId {
+    public static void deleteComment(int userId, JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, NoCommentWithThisId, UserWasNotInvitedException {
         int commentId = data.getInt("commentId");
         int pollId = data.getInt("pollId");
         Poll poll = PollServices.getPoll(pollId);
+
         if(poll == null)
             throw new ObjectNotFoundInDBException();
-        if(poll.doesContainComment(commentId) == false)
+        if(!poll.isUserInvited(userId))
+            throw new UserWasNotInvitedException();
+        if(!poll.doesContainComment(commentId))
             throw new NoCommentWithThisId();
 
         Comment comment = CommentDataHandler.getComment(commentId);
         if(comment.isReply()){
             int repliedCommentId = comment.getRepliedCommentId();
             Comment repliedComment = CommentDataHandler.getComment(repliedCommentId);
-            repliedComment.removeRepliedComment(comment);
+            repliedComment.removeRepliedComment(comment.getId());
             CommentDataHandler.updateRepliedList(repliedComment);
         }
         else{
@@ -36,15 +39,16 @@ public class CommentServices {
         }
 
         ArrayList<Integer> replies = comment.getRepliedCommentsIds();
-        if(replies.size() > 0) {
-            for (int replyOfCommentId : replies) {
-                poll.removeCommentId(replyOfCommentId);
-                CommentDataHandler.removeComment(replyOfCommentId);
-            }
+        while (replies.size() > 0){
+            int replyOfCommentId = replies.get(0);
+            Comment replyComment = CommentDataHandler.getComment(replyOfCommentId);
+            replies.addAll(replyComment.getRepliedCommentsIds());
+            poll.removeCommentId(replyOfCommentId);
+            CommentDataHandler.removeComment(replyOfCommentId);
+            replies.remove(0);
         }
 
         poll.removeCommentId(commentId);
-        PollDataHandler.updateComments(poll);
         PollDataHandler.updateCommentIds(poll);
         CommentDataHandler.removeComment(commentId);
     }

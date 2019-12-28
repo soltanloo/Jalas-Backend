@@ -225,7 +225,37 @@ public class PollsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
         } catch (UserWasNotInvitedException e) {
             e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("You are not invited");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not invited");
         }
+    }
+
+    @RequestMapping(value = "/api/poll/deleteComment", method = RequestMethod.POST)
+    public ResponseEntity deleteComment (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId.equals(""))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
+        try {
+            JSONObject data = new JSONObject(reqData);
+            CommentServices.deleteComment(Integer.parseInt(userId), data);
+            return ResponseEntity.ok("comment successfully deleted");
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing the JSON");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (NoCommentWithThisId noCommentWithThisId) {
+            noCommentWithThisId.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid comment");
+        } catch (ObjectNotFoundInDBException e) {
+            e.printStackTrace();
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No such comment");
+        } catch (UserWasNotInvitedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not invited");
+        }
+
     }
 }
