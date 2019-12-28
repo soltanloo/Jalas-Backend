@@ -55,6 +55,23 @@ public class UserSeed {
             "    ]\n" +
             "    },\n" +
             "    {\n" +
+            "        \"id\": \"810000001\",\n" +
+            "            \"firstName\": \"owner\",\n" +
+            "            \"lastName\": \"owner\",\n" +
+            "            \"email\": \"owner@owner.com\",\n" +
+            "            \"isLoggedIn\": \"0\",\n" +
+            "            \"role\": \"productowner\",\n" +
+            "            \"password\": \"owner\",\n" +
+            "            \"createdPollIds\": [\n" +
+            "    ],\n" +
+            "        \"invitedPollIds\": [\n" +
+            "    ],\n" +
+            "        \"createdMeetingIds\": [\n" +
+            "    ],\n" +
+            "        \"invitedMeetingIds\": [\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    {\n" +
             "        \"id\": \"810195411\",\n" +
             "            \"firstName\": \"Moreno\",\n" +
             "            \"lastName\": \"Avila\",\n" +

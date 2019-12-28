@@ -11,7 +11,7 @@ import Models.User;
 public class AnalyticServices {
     public static int getReseverdRoomsNum(int userId) throws DataBaseErrorException, AccessViolationException {
         User admin = UserDataHandler.getUser(userId);
-        if(admin.getRole().equalsIgnoreCase("admin") == false)
+        if(admin.getRole().equalsIgnoreCase("admin" )== false)
             throw new AccessViolationException();
         return MeetingDataHandler.getSetMeetingsNum();
     }
@@ -24,7 +24,7 @@ public class AnalyticServices {
 
     public static int getAllPollsNum(int userId) throws DataBaseErrorException, AccessViolationException {
         User admin = UserDataHandler.getUser(userId);
-        if(admin.getRole().equalsIgnoreCase("admin") == false)
+        if((admin.getRole().equalsIgnoreCase("admin") || admin.getRole().equalsIgnoreCase("owner" )) == false)
             throw new AccessViolationException();
         return PollDataHandler.getNumOfRows();
     }
@@ -46,13 +46,16 @@ public class AnalyticServices {
 
     public static int getAllMeetingsNum(int userId) throws DataBaseErrorException, AccessViolationException {
         User admin = UserDataHandler.getUser(userId);
-        if(admin.getRole().equalsIgnoreCase("admin") == false)
+        if((admin.getRole().equalsIgnoreCase("admin") || admin.getRole().equalsIgnoreCase("owner" ) )== false)
             throw new AccessViolationException();
         return MeetingDataHandler.getNumOfRows();
     }
 
-    public static long getCreationMeanTime(){
-        return MeetingDataHandler.getCreationMeanTime();
+    public static long getCreationMeanTime(int userId) throws AccessViolationException, DataBaseErrorException {
+        User admin = UserDataHandler.getUser(userId);
+        if(admin.getRole().equalsIgnoreCase("owner" ) == false)
+            throw new AccessViolationException();
+        return PollDataHandler.getMeanCreationTime();
     }
 
 }

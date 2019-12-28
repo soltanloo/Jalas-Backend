@@ -15,8 +15,8 @@ import static BusinessLogic.AnalyticServices.*;
 @CrossOrigin (origins = "*", allowedHeaders = "*")
 @RestController
 public class AnalyticController {
-    @RequestMapping (value = "/api/analytic", method = RequestMethod.GET)
-    public ResponseEntity getAnalytics(HttpServletRequest req) {
+    @RequestMapping (value = "/api/metrics", method = RequestMethod.GET)
+    public ResponseEntity getMetrics(HttpServletRequest req) {
         String userId = (String) req.getAttribute("userId");
         if (userId == "")
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
@@ -36,6 +36,36 @@ public class AnalyticController {
             data.put("usersNum",usersNum);
             data.put("commentsNum",commentsNum);
 //            data.put("creationMeanTime", creationMeanTime);
+            return ResponseEntity.ok(data.toString());
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
+
+    @RequestMapping (value = "/api/performance", method = RequestMethod.GET)
+    public ResponseEntity getPerformance(HttpServletRequest req) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId == "")
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+        try {
+            int meetingsNum = getAllMeetingsNum(Integer.parseInt(userId));
+            int pollsNum = getAllPollsNum(Integer.parseInt(userId));
+            long pollCreationMeanTime = getCreationMeanTime(Integer.parseInt(userId));
+            double meetingsPerPoll = meetingsNum / pollsNum;
+            JSONObject data = new JSONObject();
+            data.put("meetingsNum", meetingsNum);
+            data.put("pollsNum",pollsNum);
+            data.put("creationMeanTime", pollCreationMeanTime);
+            data.put("meetingsPerPoll", meetingsPerPoll);
             return ResponseEntity.ok(data.toString());
         } catch (DataBaseErrorException e) {
             e.printStackTrace();
