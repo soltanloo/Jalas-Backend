@@ -47,11 +47,7 @@ public class MeetingServices {
             String content = "New Meeting has been arranged!\n" +
                     "api/meeting/" + meeting.getId();
             for(int userID : poll.getInvitedUserIds()) {
-                try {
-                    EmailService.sendMail(UserServices.getUserEmail(userID), content);
-                } catch (InvalidEmailAddressException e) {
-                    e.printStackTrace();
-                }
+                EmailService.sendMail(UserServices.getUserEmail(userID), content);
             }
 
             if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {
