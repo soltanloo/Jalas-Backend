@@ -38,6 +38,23 @@ public class UserSeed {
             "    ]\n" +
             "    },\n" +
             "    {\n" +
+            "        \"id\": \"810000000\",\n" +
+            "            \"firstName\": \"admin\",\n" +
+            "            \"lastName\": \"admin\",\n" +
+            "            \"email\": \"admin@admin.com\",\n" +
+            "            \"isLoggedIn\": \"0\",\n" +
+            "            \"role\": \"admin\",\n" +
+            "            \"password\": \"admin\",\n" +
+            "            \"createdPollIds\": [\n" +
+            "    ],\n" +
+            "        \"invitedPollIds\": [\n" +
+            "    ],\n" +
+            "        \"createdMeetingIds\": [\n" +
+            "    ],\n" +
+            "        \"invitedMeetingIds\": [\n" +
+            "    ]\n" +
+            "    },\n" +
+            "    {\n" +
             "        \"id\": \"810195411\",\n" +
             "            \"firstName\": \"Moreno\",\n" +
             "            \"lastName\": \"Avila\",\n" +

@@ -23,9 +23,18 @@ public class AnalyticController {
         try {
             int reservedRoomsNum = getReseverdRoomsNum(Integer.parseInt(userId));
             int canceledMeetingsNum = getCanceledMeetingsNum(Integer.parseInt(userId));
+            int meetingsNum = getAllMeetingsNum(Integer.parseInt(userId));
+            int pollsNum = getAllPollsNum(Integer.parseInt(userId));
+            int usersNum = getAllUsersNum(Integer.parseInt(userId));
+            int commentsNum = getAllCommentsNum(Integer.parseInt(userId));
+
             JSONObject data = new JSONObject();
             data.put("reservedRoomsNum", reservedRoomsNum);
             data.put("canceledMeetingsNum", canceledMeetingsNum);
+            data.put("meetingsNum", meetingsNum);
+            data.put("pollsNum",pollsNum);
+            data.put("usersNum",usersNum);
+            data.put("commentsNum",commentsNum);
 //            data.put("creationMeanTime", creationMeanTime);
             return ResponseEntity.ok(data.toString());
         } catch (DataBaseErrorException e) {
