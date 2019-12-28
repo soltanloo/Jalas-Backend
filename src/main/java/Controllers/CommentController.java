@@ -4,6 +4,7 @@ import BusinessLogic.CommentServices;
 import BusinessLogic.RoomServices;
 import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.NoCommentWithThisId;
+import ErrorClasses.NotTheOwnerException;
 import ErrorClasses.ObjectNotFoundInDBException;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -38,6 +39,9 @@ public class CommentController {
         } catch (ObjectNotFoundInDBException e) {
             e.printStackTrace();
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("No such comment");
+        } catch (NotTheOwnerException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are not the creator of the comment");
         }
 
     }
