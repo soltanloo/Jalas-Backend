@@ -52,11 +52,7 @@ public class UserServices {
             String email = getUserEmail(id);
             String content = "New option for one of participating polls was added :\n";
             content += "http://localhost:8080/api/poll/" + pollId;
-            try {
-                EmailService.sendMail(email, content);
-            } catch (InvalidEmailAddressException e) {
-                e.printStackTrace();
-            }
+            EmailService.sendMail(email, content);
         }
     }
 
@@ -65,11 +61,7 @@ public class UserServices {
             String email = getUserEmail(id);
             String content = "An Option for one of the participating polls was Deleted :\n";
             content += "http://localhost:8080/api/poll/" + pollId;
-            try {
-                EmailService.sendMail(email, content);
-            } catch (InvalidEmailAddressException e) {
-                e.printStackTrace();
-            }
+            EmailService.sendMail(email, content);
         }
     }
 
@@ -77,21 +69,13 @@ public class UserServices {
         String email = getUserEmail(userId);
         String content = "Your vote has been added to Poll with pollID " + pollId;
         content += "http://localhost:8080/api/poll/" + pollId;
-        try {
-            EmailService.sendMail(email, content);
-        } catch (InvalidEmailAddressException e) {
-            e.printStackTrace();
-        }
+        EmailService.sendMail(email, content);
     }
 
     public static void notifyNewPollCreated(User user, int pollId) {
         String content = "You have created a new poll with ID = " + pollId;
         content += "\nhttp://localhost:8080/api/poll/" + pollId;
-        try {
-            EmailService.sendMail(user.getEmail(), content);
-        } catch (InvalidEmailAddressException e) {
-            e.printStackTrace();
-        }
+        EmailService.sendMail(user.getEmail(), content);
     }
 
     public static String signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException {
@@ -133,11 +117,7 @@ public class UserServices {
     public static void notifyAddedToPoll(String userEmail, int pollId) {
         String content = "You have been added to a new poll!\n";
         content += "http://localhost:8080/api/poll/" + pollId;
-        try {
-            EmailService.sendMail(userEmail,content);
-        } catch (InvalidEmailAddressException e) {
-            e.printStackTrace();
-        }
+        EmailService.sendMail(userEmail,content);
     }
 
 }
