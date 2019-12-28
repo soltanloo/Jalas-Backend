@@ -78,18 +78,24 @@ public class UserServices {
         EmailService.sendMail(user.getEmail(), content);
     }
 
-    public static String signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException {
+    public static User signIn (JSONObject data) throws NoSuchUsernameException, WrongPasswordException, JSONException {
         String email = data.getString("email");
-        int userId = getUserIdByEmail(email);
-        if (userId == -1)
+        User user;
+        try {
+            user = UserDataHandler.getUserByEmail(email);
+            if (user == null)
+                throw new NoSuchUsernameException();
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
             throw new NoSuchUsernameException();
+        }
 
         String password = MD5Service.changeToMd5(data.getString("password"));
         if (isPasswordCorrect(email, password)) {
             userLogin(email);
         } else
             throw new WrongPasswordException();
-        return Integer.toString(userId);
+        return user;
     }
 
     public static String getUserName(int userId) throws DataBaseErrorException {
@@ -98,16 +104,6 @@ public class UserServices {
 
     private static boolean isPasswordCorrect (String email, String password) {
         return UserDataHandler.checkPasswordCorrectness(email, password);
-    }
-
-    private static int getUserIdByEmail (String email) {
-        try {
-            User user = UserDataHandler.getUserByEmail(email);
-            return user.getId();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }
     }
 
     private static void userLogin (String email) {

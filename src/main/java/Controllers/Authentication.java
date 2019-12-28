@@ -3,6 +3,7 @@ package Controllers;
 import BusinessLogic.UserServices;
 import ErrorClasses.NoSuchUsernameException;
 import ErrorClasses.WrongPasswordException;
+import Models.User;
 import Services.JWTService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -21,8 +22,8 @@ public class Authentication {
     public ResponseEntity SignInUser (@RequestBody String requestBody) {
         try {
             JSONObject data = new JSONObject(requestBody);
-            String userId = UserServices.signIn(data);
-            String token = JWTService.createJWT(userId);
+            User user = UserServices.signIn(data);
+            String token = JWTService.createJWT(Integer.toString(user.getId()), user.getRole());
             return ResponseEntity.status(HttpStatus.OK).header("user-token", token).body("Logged in");
         } catch (NoSuchUsernameException | WrongPasswordException | JSONException  e) {
             e.printStackTrace();

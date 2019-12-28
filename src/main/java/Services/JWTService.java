@@ -12,7 +12,7 @@ import java.util.HashMap;
 public class JWTService {
     private static Algorithm algorithm = Algorithm.HMAC256("jalas-juggernaut");
 
-    public static String createJWT (String userId) {
+    public static String createJWT (String userId, String role) {
         Date     now_date = new Date();
         Calendar c        = Calendar.getInstance();
         c.setTime(now_date);
@@ -27,6 +27,7 @@ public class JWTService {
                 .withIssuedAt(now_date)
                 .withExpiresAt(expire_date)
                 .withClaim("userId", userId)
+                .withClaim("role", role)
                 .sign(algorithm);
     }
 
@@ -43,5 +44,12 @@ public class JWTService {
             return null;
         DecodedJWT jwt = JWT.decode(token);
         return jwt.getClaim("userId").asString();
+    }
+
+    public static String decodeRoleJWT(String token) {
+        if(token == null || token.equals(""))
+            return null;
+        DecodedJWT jwt = JWT.decode(token);
+        return jwt.getClaim("role").asString();
     }
 }
