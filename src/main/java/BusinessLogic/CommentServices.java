@@ -28,11 +28,18 @@ public class CommentServices {
             repliedComment.removeRepliedComment(comment);
             CommentDataHandler.updateRepliedList(repliedComment);
         }
+        else{
+            poll.deleteComment(commentId);
+            PollDataHandler.updateComments(poll);
+        }
+
         for(int replyOfCommentId: comment.getRepliedCommentsIds()){
             poll.deleteComment(replyOfCommentId);
+            poll.removeCommentId(replyOfCommentId);
             CommentDataHandler.removeComment(replyOfCommentId);
         }
-        poll.deleteComment(commentId);
+
+        poll.removeCommentId(commentId);
         PollDataHandler.updateComments(poll);
         PollDataHandler.updateCommentIds(poll);
         CommentDataHandler.removeComment(commentId);
