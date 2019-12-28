@@ -60,7 +60,11 @@ public class AnalyticController {
             int meetingsNum = getAllMeetingsNum(Integer.parseInt(userId));
             int pollsNum = getAllPollsNum(Integer.parseInt(userId));
             long pollCreationMeanTime = getCreationMeanTime(Integer.parseInt(userId));
-            double meetingsPerPoll = meetingsNum / pollsNum;
+            double meetingsPerPoll;
+            if(pollsNum == 0)
+                meetingsPerPoll = -1;
+            else
+                meetingsPerPoll = meetingsNum / pollsNum;
             JSONObject data = new JSONObject();
             data.put("meetingsNum", meetingsNum);
             data.put("pollsNum",pollsNum);
