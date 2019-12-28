@@ -255,6 +255,9 @@ public class PollsController {
         } catch (UserWasNotInvitedException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not invited");
+        } catch (NotTheOwnerException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to delete this comment");
         }
 
     }

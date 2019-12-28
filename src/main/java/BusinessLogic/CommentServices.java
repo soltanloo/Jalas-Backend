@@ -2,10 +2,7 @@ package BusinessLogic;
 
 import DataManagers.CommentDataHandler;
 import DataManagers.PollDataHandler;
-import ErrorClasses.DataBaseErrorException;
-import ErrorClasses.NoCommentWithThisId;
-import ErrorClasses.ObjectNotFoundInDBException;
-import ErrorClasses.UserWasNotInvitedException;
+import ErrorClasses.*;
 import Models.Comment;
 import Models.Poll;
 import org.json.JSONException;
@@ -14,7 +11,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class CommentServices {
-    public static void deleteComment(int userId, JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, NoCommentWithThisId, UserWasNotInvitedException {
+    public static void deleteComment(int userId, JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, NoCommentWithThisId, UserWasNotInvitedException, NotTheOwnerException {
         int commentId = data.getInt("commentId");
         int pollId = data.getInt("pollId");
         Poll poll = PollServices.getPoll(pollId);
@@ -27,6 +24,10 @@ public class CommentServices {
             throw new NoCommentWithThisId();
 
         Comment comment = CommentDataHandler.getComment(commentId);
+
+        if (poll.getOwnerId() != userId && comment.getCommenterId() != userId)
+            throw new NotTheOwnerException();
+
         if(comment.isReply()){
             int repliedCommentId = comment.getRepliedCommentId();
             Comment repliedComment = CommentDataHandler.getComment(repliedCommentId);
