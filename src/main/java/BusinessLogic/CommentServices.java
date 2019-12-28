@@ -11,6 +11,8 @@ import Models.Poll;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+
 public class CommentServices {
     public static void deleteComment(JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, NoCommentWithThisId {
         int commentId = data.getInt("commentId");
@@ -33,10 +35,12 @@ public class CommentServices {
             PollDataHandler.updateComments(poll);
         }
 
-        for(int replyOfCommentId: comment.getRepliedCommentsIds()){
-            poll.deleteComment(replyOfCommentId);
-            poll.removeCommentId(replyOfCommentId);
-            CommentDataHandler.removeComment(replyOfCommentId);
+        ArrayList<Integer> replies = comment.getRepliedCommentsIds();
+        if(replies.size() > 0) {
+            for (int replyOfCommentId : replies) {
+                poll.removeCommentId(replyOfCommentId);
+                CommentDataHandler.removeComment(replyOfCommentId);
+            }
         }
 
         poll.removeCommentId(commentId);
