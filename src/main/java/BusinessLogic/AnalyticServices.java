@@ -22,4 +22,5 @@ public class AnalyticServices {
     public static long getCreationMeanTime(){
         return MeetingDataHandler.getCreationMeanTime();
     }
+
 }

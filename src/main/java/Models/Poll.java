@@ -34,6 +34,10 @@ public class Poll {
         containingCommentIds.add(id);
     }
 
+    public void removeCommentId(int id) {
+        containingCommentIds.remove(id);
+    }
+
     public ArrayList<Comment> getComments() {
         return comments;
     }
