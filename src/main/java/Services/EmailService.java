@@ -5,14 +5,23 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Properties;
 
+import ErrorClasses.InvalidEmailAddressException;
+import org.apache.commons.validator.routines.EmailValidator;
+
 public class EmailService {
     private static final String USERNAME = "jalas.jugger@outlook.com";
     private static final String PASSWORD = "jalasjalas123";
     private static final String EMAIL_FROM = "jalas.jugger@outlook.com";
     private static final String EMAIL_SUBJECT = "Jalas new notification";
 
-    public static void sendMail(String receiverAddress, String content) {
+    public static boolean isEmailValid(String emailAddress) {
+        EmailValidator validator = EmailValidator.getInstance(false);
+        return validator.isValid(emailAddress);
+    }
 
+    public static void sendMail(String receiverAddress, String content) throws InvalidEmailAddressException {
+        if (!isEmailValid(receiverAddress))
+            throw new InvalidEmailAddressException();
         Properties prop = new Properties();
         prop.put("mail.smtp.host", "outlook.office365.com");
         prop.put("mail.smtp.port", "587");

@@ -63,14 +63,14 @@ public class PollServices {
         poll.addInvitedUser(user.getId());
         PollDataHandler.updateInvitedIds(poll);
 
-        String content = "You have been added to a new poll!\n";
-        content += "http://localhost:8080/api/poll/" + pollId;
-        EmailService.sendMail(userEmail,content);
+        UserServices.notifyAddedToPoll(userEmail, pollId);
 
         user.addInvitedPollId(poll.getId());
         UserDataHandler.updateInvitedPollIds(user);
 
     }
+
+
 
     public static void removeParticipant(int userId, JSONObject data) throws DataBaseErrorException, AccessViolationException, JSONException, UserWasNotInvitedException {
         String userEmail = data.getString("userEmail");

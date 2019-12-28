@@ -8,6 +8,7 @@ public class UserSeed {
             "            \"lastName\": \"Mccall\",\n" +
             "            \"email\": \"chrystalmcleod@zenolux.com\",\n" +
             "            \"isLoggedIn\": \"0\",\n" +
+            "            \"role\": \"user\",\n" +
             "            \"password\": \"1234\",\n" +
             "            \"createdPollIds\": [\n" +
             "        {\n" +
@@ -42,6 +43,7 @@ public class UserSeed {
             "            \"lastName\": \"Avila\",\n" +
             "            \"email\": \"huffphelps@pharmacon.com\",\n" +
             "            \"isLoggedIn\": \"0\",\n" +
+            "            \"role\": \"user\",\n" +
             "            \"password\": \"12345\",\n" +
             "            \"createdPollIds\": [\n" +
             "        {\n" +
@@ -94,6 +96,7 @@ public class UserSeed {
             "            \"lastName\": \"Richardson\",\n" +
             "            \"email\": \"mariannesims@comtrail.com\",\n" +
             "            \"isLoggedIn\": \"0\",\n" +
+            "            \"role\": \"user\",\n" +
             "            \"password\": \"123456\",\n" +
             "            \"createdPollIds\": [\n" +
             "        {\n" +
@@ -137,6 +140,7 @@ public class UserSeed {
             "            \"lastName\": \"Gonzalez\",\n" +
             "            \"email\": \"rastin30@gmail.com\",\n" +
             "            \"isLoggedIn\": \"0\",\n" +
+            "            \"role\": \"user\",\n" +
             "            \"password\": \"1234567\",\n" +
             "            \"createdPollIds\": [\n" +
             "    ],\n" +

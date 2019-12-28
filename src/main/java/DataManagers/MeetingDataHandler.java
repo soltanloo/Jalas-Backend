@@ -142,6 +142,7 @@ public class MeetingDataHandler {
         }
         DataBaseConnector.releaseConnection(con);
     }
+
     public static int getSetMeetingsNum(){
         String sql = "SELECT * FROM Meeting WHERE status = ?";
         Connection con = DataBaseConnector.getConnection();
