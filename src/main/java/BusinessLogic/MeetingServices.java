@@ -1,10 +1,7 @@
 package BusinessLogic;
 
 import DataManagers.MeetingDataHandler;
-import ErrorClasses.DataBaseErrorException;
-import ErrorClasses.NotTheOwnerException;
-import ErrorClasses.PollFinishedException;
-import ErrorClasses.RoomReservationErrorException;
+import ErrorClasses.*;
 import Models.Meeting;
 import Models.Poll;
 import Models.User;
@@ -50,7 +47,11 @@ public class MeetingServices {
             String content = "New Meeting has been arranged!\n" +
                     "api/meeting/" + meeting.getId();
             for(int userID : poll.getInvitedUserIds()) {
-                EmailService.sendMail(UserServices.getUserEmail(userID), content);
+                try {
+                    EmailService.sendMail(UserServices.getUserEmail(userID), content);
+                } catch (InvalidEmailAddressException e) {
+                    e.printStackTrace();
+                }
             }
 
             if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {

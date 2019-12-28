@@ -130,4 +130,14 @@ public class UserServices {
         UserDataHandler.userLogin(email);
     }
 
+    public static void notifyAddedToPoll(String userEmail, int pollId) {
+        String content = "You have been added to a new poll!\n";
+        content += "http://localhost:8080/api/poll/" + pollId;
+        try {
+            EmailService.sendMail(userEmail,content);
+        } catch (InvalidEmailAddressException e) {
+            e.printStackTrace();
+        }
+    }
+
 }
