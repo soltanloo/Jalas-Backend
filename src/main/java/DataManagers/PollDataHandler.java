@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 
 public class PollDataHandler {
-    private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds, comments, containingCommentIds)";
+    private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds, comments, containingCommentIds, creationTime)";
 
     public static void init() {
         DataManager.dropExistingTable("Poll");
@@ -37,7 +37,8 @@ public class PollDataHandler {
                     "ownerId INTEGER, " +
                     "invitedUserIds TEXT, " +
                     "comments TEXT, " +
-                    "containingCommentIds TEXT)";
+                    "containingCommentIds TEXT," +
+                    "creationTime INTEGER)";
             st.executeUpdate(sql);
             st.close();
         } catch (SQLException e) {
@@ -47,7 +48,7 @@ public class PollDataHandler {
     }
 
     public static boolean addPoll(Poll poll) {
-        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -238,6 +239,7 @@ public class PollDataHandler {
             st.setString(6, DataHelpers.stringify(poll.getInvitedUserIds()));
             st.setString(7, DataHelpers.stringify(poll.getCommentIds()));
             st.setString(8, DataHelpers.stringify(poll.getContainingCommentIds()));
+            st.setInt(9, poll.getCreationTime());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -266,6 +268,7 @@ public class PollDataHandler {
             poll.setComments(comments);
 
             poll.setContainingCommentIds(DataHelpers.makeList(rs.getString("containingCommentIds")));
+            poll.setCreationTime(rs.getInt("creationTime"));
 
             return poll;
         } catch(SQLException e) {

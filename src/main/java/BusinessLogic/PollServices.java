@@ -104,6 +104,7 @@ public class PollServices {
         poll.setTitle(data.getString("title"));
         poll.setOngoing(true);
         poll.setOwnerId(userId);
+        poll.setCreationTime(data.getInt("creationTime"));
 
         ArrayList<PollOption> options = new ArrayList<>();
         JSONArray jOptions = data.getJSONArray("options");

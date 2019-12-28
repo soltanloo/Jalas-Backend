@@ -16,11 +16,19 @@ public class Poll {
     private boolean isOngoing;
     private int ownerId;
     private ArrayList<Integer> invitedUserIds = new ArrayList<>();
+    private int creationTime;
 
     public Poll(){
         this.id = count++;
     }
 
+    public int getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(int creationTime) {
+        this.creationTime = creationTime;
+    }
 
     public ArrayList<Integer> getContainingCommentIds() {
         return containingCommentIds;
