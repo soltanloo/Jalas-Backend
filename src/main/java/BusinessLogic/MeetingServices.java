@@ -5,7 +5,6 @@ import ErrorClasses.*;
 import Models.Meeting;
 import Models.Poll;
 import Models.User;
-import Services.EmailService;
 import Services.RoomReservationService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -18,24 +17,9 @@ public class MeetingServices {
     private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     public static Meeting addMeeting(int userId, JSONObject data) throws JSONException, RoomReservationErrorException, DataBaseErrorException, PollFinishedException, NotTheOwnerException {
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-
         Poll poll = PollServices.getPoll(data.getInt("pollId"));
-
-        if (!poll.isOngoing())
-            throw new PollFinishedException();
-        if (poll.getOwnerId() != userId)
-            throw new NotTheOwnerException();
-
-        Meeting meeting = new Meeting();
-
-        meeting.setRoomNumber(data.getInt("roomNumber"));
-        meeting.setStartTime(data.getString("startTime"));
-        meeting.setFinishTime(data.getString("finishTime"));
-        meeting.setTitle(poll.getTitle());
-        meeting.setOwnerId(poll.getOwnerId());
-        meeting.setInvitedUserIds(poll.getInvitedUserIds());
-        meeting.setCreateTime(sdf.format(timestamp));
+        checkPollConstraints(userId, poll);
+        Meeting meeting = setMeetingData(data, poll);
 
         if(MeetingDataHandler.addMeeting(meeting)) {
             UserServices.addUserCreatedMeeting(poll.getOwnerId(), meeting.getId());
@@ -44,11 +28,7 @@ public class MeetingServices {
             for (int invUserId : poll.getInvitedUserIds()) {
                 UserServices.addUserInvitedMeeting(invUserId, meeting.getId());
             }
-            String content = "New Meeting has been arranged!\n" +
-                    "api/meeting/" + meeting.getId();
-            for(int userID : poll.getInvitedUserIds()) {
-                EmailService.sendMail(UserServices.getUserEmail(userID), content);
-            }
+            UserServices.notifyNewMeeting(poll.getInvitedUserIds(), meeting.getId());
 
             if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {
                 MeetingDataHandler.setMeetingStatus(meeting);
@@ -59,6 +39,27 @@ public class MeetingServices {
         else {
             throw new DataBaseErrorException();
         }
+    }
+
+    public static Meeting setMeetingData(JSONObject data, Poll poll) throws JSONException {
+        Meeting meeting = new Meeting();
+
+        meeting.setRoomNumber(data.getInt("roomNumber"));
+        meeting.setStartTime(data.getString("startTime"));
+        meeting.setFinishTime(data.getString("finishTime"));
+        meeting.setTitle(poll.getTitle());
+        meeting.setOwnerId(poll.getOwnerId());
+        meeting.setInvitedUserIds(poll.getInvitedUserIds());
+        meeting.setCreateTime(sdf.format(new Timestamp(System.currentTimeMillis())));
+
+        return meeting;
+    }
+
+    public static void checkPollConstraints(int userId, Poll poll) throws PollFinishedException, NotTheOwnerException {
+        if (!poll.isOngoing())
+            throw new PollFinishedException();
+        if (poll.getOwnerId() != userId)
+            throw new NotTheOwnerException();
     }
 
     public static void cancelMeeting(int userId, String meetingId) throws DataBaseErrorException, NotTheOwnerException {

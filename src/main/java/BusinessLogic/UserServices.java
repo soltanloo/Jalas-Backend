@@ -126,4 +126,11 @@ public class UserServices {
             EmailService.sendMail(getUserEmail(id), content);
     }
 
+    public static void notifyNewMeeting(ArrayList<Integer> userIds, int meetingId) throws DataBaseErrorException {
+        String content = "New Meeting has been arranged!\n" +
+                "api/meeting/" + meetingId;
+        for(int userID : userIds) {
+            EmailService.sendMail(getUserEmail(userID), content);
+        }
+    }
 }
