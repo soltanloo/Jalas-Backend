@@ -1,6 +1,7 @@
 package BusinessLogic;
 
 import DataManagers.MeetingDataHandler;
+import DataManagers.UserDataHandler;
 import ErrorClasses.*;
 import Models.Meeting;
 import Models.Poll;
@@ -67,6 +68,7 @@ public class MeetingServices {
         if(meeting.getOwnerId() != userId)
             throw new NotTheOwnerException();
         MeetingDataHandler.cancelMeeting(meeting.getId());
+        UserServices.notifyCanceledMeeting(meeting.getInvitedUserIds(), meeting.getId());
     }
 
     public static Meeting getMeeting(String id) throws DataBaseErrorException {

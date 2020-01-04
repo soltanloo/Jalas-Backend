@@ -133,4 +133,12 @@ public class UserServices {
             EmailService.sendMail(getUserEmail(userID), content);
         }
     }
+
+    public static void notifyCanceledMeeting(ArrayList<Integer> userIds, int meetingId) throws DataBaseErrorException {
+        String content = "Meeting has been canceled\n" +
+                "api/meeting/" + meetingId;
+        for(int userID : userIds) {
+            EmailService.sendMail(getUserEmail(userID), content);
+        }
+    }
 }

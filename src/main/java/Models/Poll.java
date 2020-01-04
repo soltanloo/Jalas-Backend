@@ -198,4 +198,12 @@ public class Poll {
                 return true;
         return false;
     }
+
+    public PollOption getUserVotedOption(int userId) {
+        for (PollOption option : options) {
+            if (option.getUserList().contains(userId))
+                return option;
+        }
+        return null;
+    }
 }

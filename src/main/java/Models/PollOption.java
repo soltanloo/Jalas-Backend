@@ -56,4 +56,10 @@ public class PollOption {
     public void setFinishTime(String finishTime) {
         this.finishTime = finishTime;
     }
+
+    public void removeVotedUser(int userId) {
+        for (int i = 0; i < userList.size(); i++)
+            if (userList.get(i) == userId)
+                userList.remove(i);
+    }
 }

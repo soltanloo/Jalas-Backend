@@ -42,6 +42,12 @@ public class PollServices {
         boolean status = option.addVote(userId);
         if(!status)
             throw new DuplicateVoteException();
+
+        PollOption prevOption = poll.getUserVotedOption(userId);
+        if (prevOption != null) {
+            prevOption.removeVotedUser(userId);
+            PollOptionDataHandler.updateUserIDList(prevOption);
+        }
         PollOptionDataHandler.updateUserIDList(option);
         UserServices.notifyNewVote(userId, pollID);
     }
