@@ -16,12 +16,7 @@ public class CommentServices {
         int pollId = data.getInt("pollId");
         Poll poll = PollServices.getPoll(pollId);
 
-        if(poll == null)
-            throw new ObjectNotFoundInDBException();
-        if(!poll.isUserInvited(userId))
-            throw new UserWasNotInvitedException();
-        if(!poll.doesContainComment(commentId))
-            throw new NoCommentWithThisId();
+        checkPreCOnstraintsForDeleteComment(userId, commentId, poll);
 
         Comment comment = CommentDataHandler.getComment(commentId);
 
@@ -39,6 +34,14 @@ public class CommentServices {
             PollDataHandler.updateComments(poll);
         }
 
+        deleteRepliedComments(poll, comment);
+
+        poll.removeCommentId(commentId);
+        PollDataHandler.updateCommentIds(poll);
+        CommentDataHandler.removeComment(commentId);
+    }
+
+    public static void deleteRepliedComments(Poll poll, Comment comment) throws DataBaseErrorException {
         ArrayList<Integer> replies = comment.getRepliedCommentsIds();
         while (replies.size() > 0){
             int replyOfCommentId = replies.get(0);
@@ -48,10 +51,15 @@ public class CommentServices {
             CommentDataHandler.removeComment(replyOfCommentId);
             replies.remove(0);
         }
+    }
 
-        poll.removeCommentId(commentId);
-        PollDataHandler.updateCommentIds(poll);
-        CommentDataHandler.removeComment(commentId);
+    public static void checkPreCOnstraintsForDeleteComment(int userId, int commentId, Poll poll) throws ObjectNotFoundInDBException, UserWasNotInvitedException, NoCommentWithThisId {
+        if(poll == null)
+            throw new ObjectNotFoundInDBException();
+        if(!poll.isUserInvited(userId))
+            throw new UserWasNotInvitedException();
+        if(!poll.doesContainComment(commentId))
+            throw new NoCommentWithThisId();
     }
 
     public static void addComment(int userId, JSONObject data) throws JSONException, ObjectNotFoundInDBException, DataBaseErrorException, UserWasNotInvitedException, NoCommentWithThisId {
@@ -73,13 +81,7 @@ public class CommentServices {
                 throw new NoCommentWithThisId();
         }
 
-        Comment newComment = new Comment();
-        newComment.setCommenterId(userId);
-        newComment.setCommenterName(UserServices.getUserName(userId));
-        newComment.setRepliedCommentId(repliedCommentId);
-        newComment.setCommentedPollId(poll.getId());
-        newComment.setReply(isReply);
-        newComment.setContainingText(data.getString("text"));
+        Comment newComment = createComment(userId, data, isReply, repliedCommentId, poll);
 
         CommentDataHandler.addComment(newComment);
         if (isReply) {
@@ -93,6 +95,17 @@ public class CommentServices {
         }
         poll.addCommentId(newComment.getId());
         PollDataHandler.updateCommentIds(poll);
+    }
+
+    public static Comment createComment(int userId, JSONObject data, boolean isReply, int repliedCommentId, Poll poll) throws DataBaseErrorException, JSONException {
+        Comment newComment = new Comment();
+        newComment.setCommenterId(userId);
+        newComment.setCommenterName(UserServices.getUserName(userId));
+        newComment.setRepliedCommentId(repliedCommentId);
+        newComment.setCommentedPollId(poll.getId());
+        newComment.setReply(isReply);
+        newComment.setContainingText(data.getString("text"));
+        return newComment;
     }
 
     public static void editComment(int userId, JSONObject data) throws JSONException, ObjectNotFoundInDBException, UserWasNotInvitedException, DataBaseErrorException, NoCommentWithThisId, AccessViolationException {
