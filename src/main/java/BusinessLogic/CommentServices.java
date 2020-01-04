@@ -94,4 +94,24 @@ public class CommentServices {
         poll.addCommentId(newComment.getId());
         PollDataHandler.updateCommentIds(poll);
     }
+
+    public static void editComment(int userId, JSONObject data) throws JSONException, ObjectNotFoundInDBException, UserWasNotInvitedException, DataBaseErrorException, NoCommentWithThisId, AccessViolationException {
+        int pollId = data.getInt("pollId");
+        int commentId = data.getInt("commentId");
+
+        Poll poll = PollServices.getPoll(pollId);
+        if (poll == null)
+            throw new ObjectNotFoundInDBException();
+        if (!poll.isUserInvited(userId))
+            throw new UserWasNotInvitedException();
+
+        Comment comment = CommentDataHandler.getComment(commentId);
+        if (comment.getCommentedPollId() != poll.getId())
+            throw new NoCommentWithThisId();
+        if (comment.getCommenterId() != userId)
+            throw new AccessViolationException();
+
+        comment.setContainingText(data.getString("text"));
+        CommentDataHandler.updateCommentText(comment);
+    }
 }

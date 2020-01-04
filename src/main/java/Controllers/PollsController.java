@@ -241,6 +241,34 @@ public class PollsController {
         }
     }
 
+    @PostMapping(value = "/api/poll/editComment")
+    public ResponseEntity editComment (HttpServletRequest req, @RequestBody String reqData) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId.equals(""))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
+        try {
+            JSONObject data = new JSONObject(reqData);
+            CommentServices.editComment(Integer.parseInt(userId), data);
+            return ResponseEntity.ok("Comment edited");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problem in parsing JSON");
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not this comment's owner");
+        } catch (NoCommentWithThisId | ObjectNotFoundInDBException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Comment not found");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        } catch (UserWasNotInvitedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not invited to this poll");
+        }
+    }
+
     @RequestMapping(value = "/api/poll/deleteComment", method = RequestMethod.POST)
     public ResponseEntity deleteComment (HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");

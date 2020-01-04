@@ -118,6 +118,24 @@ public class CommentDataHandler {
         }
     }
 
+    public static void updateCommentText(Comment comment) throws DataBaseErrorException {
+        String sql = "UPDATE Comment SET containingText = ? WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, comment.getContainingText());
+            stmt.setInt(2, comment.getId());
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static int getNumOfRows() throws DataBaseErrorException {
         String sql = "SELECT COUNT(id) as num FROM Comment";
         Connection con = DataBaseConnector.getConnection();
