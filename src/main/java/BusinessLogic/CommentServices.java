@@ -16,7 +16,7 @@ public class CommentServices {
         int pollId = data.getInt("pollId");
         Poll poll = PollServices.getPoll(pollId);
 
-        checkPreCOnstraintsForDeleteComment(userId, commentId, poll);
+        checkPreConstraintsForDeleteComment(userId, commentId, poll);
 
         Comment comment = CommentDataHandler.getComment(commentId);
 
@@ -53,7 +53,7 @@ public class CommentServices {
         }
     }
 
-    public static void checkPreCOnstraintsForDeleteComment(int userId, int commentId, Poll poll) throws ObjectNotFoundInDBException, UserWasNotInvitedException, NoCommentWithThisId {
+    public static void checkPreConstraintsForDeleteComment(int userId, int commentId, Poll poll) throws ObjectNotFoundInDBException, UserWasNotInvitedException, NoCommentWithThisId {
         if(poll == null)
             throw new ObjectNotFoundInDBException();
         if(!poll.isUserInvited(userId))
