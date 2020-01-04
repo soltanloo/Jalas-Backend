@@ -57,12 +57,10 @@ public class UserServices {
     }
 
     public static void notifyDeletedOption(ArrayList<Integer> userIds, Integer pollId) throws DataBaseErrorException {
-        for (Integer id : userIds) {
-            String email = getUserEmail(id);
-            String content = "An Option for one of the participating polls was Deleted :\n";
-            content += "http://localhost:8080/api/poll/" + pollId;
-            EmailService.sendMail(email, content);
-        }
+        String content = "An Option for one of the participating polls was Deleted :\n";
+        content += "http://localhost:8080/api/poll/" + pollId;
+        for (Integer id : userIds)
+            EmailService.sendMail(getUserEmail(id), content);
     }
 
     public static void notifyNewVote(int userId, int pollId) throws DataBaseErrorException {
@@ -114,6 +112,18 @@ public class UserServices {
         String content = "You have been added to a new poll!\n";
         content += "http://localhost:8080/api/poll/" + pollId;
         EmailService.sendMail(userEmail,content);
+    }
+
+    public static void notifyRemovedFromPoll(String userEmail, int pollId) {
+        String content = "You have been removed from poll with ID : " + pollId;
+        EmailService.sendMail(userEmail,content);
+    }
+
+    public static void notifyPollClosed(ArrayList<Integer> userIds, int pollId) throws DataBaseErrorException {
+        String content = "One of the polls that you are invited has been closed :\n";
+        content += "http://localhost:8080/api/poll/" + pollId;
+        for (Integer id : userIds)
+            EmailService.sendMail(getUserEmail(id), content);
     }
 
 }

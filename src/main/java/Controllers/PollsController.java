@@ -98,6 +98,9 @@ public class PollsController {
         } catch (AccessViolationException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are not this poll's owner");
+        } catch (PollAlreadyClosedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Poll is closed");
         }
     }
 
@@ -120,6 +123,9 @@ public class PollsController {
         } catch (AccessViolationException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You are not this poll's owner");
+        } catch (PollAlreadyClosedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Poll is closed");
         }
     }
 
@@ -142,6 +148,9 @@ public class PollsController {
         } catch (AccessViolationException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sent owner ID does not match poll's owner ID");
+        } catch (PollAlreadyClosedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Poll is closed");
         }
     }
 
@@ -167,6 +176,9 @@ public class PollsController {
         } catch (UserWasNotInvitedException e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("This user was not invited");
+        } catch (PollAlreadyClosedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Poll is closed");
         }
     }
 
@@ -260,5 +272,26 @@ public class PollsController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to delete this comment");
         }
 
+    }
+
+    @RequestMapping(value = "/api/poll/{id}/close", method = RequestMethod.GET)
+    public ResponseEntity closePoll (HttpServletRequest req, @PathVariable String id) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId.equals(""))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
+        try {
+            PollServices.closePoll(Integer.parseInt(userId), Integer.parseInt(id));
+            return ResponseEntity.ok("Poll Closed");
+        } catch (AccessViolationException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not allowed to delete this comment");
+        } catch (PollAlreadyClosedException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Poll is already closed");
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        }
     }
 }

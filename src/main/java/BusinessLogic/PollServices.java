@@ -46,7 +46,7 @@ public class PollServices {
         UserServices.notifyNewVote(userId, pollID);
     }
 
-    public static void addParticipant(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+    public static void addParticipant(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException, PollAlreadyClosedException {
         String userEmail = data.getString("userEmail");
         int pollId = data.getInt("pollId");
         User owner = UserDataHandler.getUser(userId);
@@ -59,6 +59,9 @@ public class PollServices {
         if (!owner.didCreatedPoll(poll.getId()))
             throw new AccessViolationException();
 
+        if (!poll.isOngoing())
+            throw new PollAlreadyClosedException();
+
         poll.addInvitedUser(user.getId());
         PollDataHandler.updateInvitedIds(poll);
 
@@ -69,9 +72,7 @@ public class PollServices {
 
     }
 
-
-
-    public static void removeParticipant(int userId, JSONObject data) throws DataBaseErrorException, AccessViolationException, JSONException, UserWasNotInvitedException {
+    public static void removeParticipant(int userId, JSONObject data) throws DataBaseErrorException, AccessViolationException, JSONException, UserWasNotInvitedException, PollAlreadyClosedException {
         String userEmail = data.getString("userEmail");
         int pollId = data.getInt("pollId");
         User owner = UserDataHandler.getUser(userId);
@@ -87,9 +88,13 @@ public class PollServices {
         if(!poll.isUserInvited(user.getId()))
             throw new UserWasNotInvitedException();
 
+        if (!poll.isOngoing())
+            throw new PollAlreadyClosedException();
+
         poll.removeInvitedUser(user.getId());
         PollDataHandler.updateInvitedIds(poll);
 
+        UserServices.notifyRemovedFromPoll(userEmail, pollId);
         user.removeInvitedPollId(poll.getId());
         UserDataHandler.updateInvitedPollIds(user);
     }
@@ -123,7 +128,7 @@ public class PollServices {
         return poll;
     }
 
-    public static Poll addOptionToPoll(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+    public static Poll addOptionToPoll(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException, PollAlreadyClosedException {
         int pollId = data.getInt("pollId");
         User owner = UserDataHandler.getUser(userId);
         Poll poll = PollDataHandler.getPoll(pollId);
@@ -134,6 +139,9 @@ public class PollServices {
         if (!owner.didCreatedPoll(poll.getId()))
             throw new AccessViolationException();
 
+        if (!poll.isOngoing())
+            throw new PollAlreadyClosedException();
+
         PollOption option = new PollOption(data.getString("startTime"), data.getString("finishTime"));
         poll.addOption(option);
         PollOptionDataHandler.addOption(option);
@@ -142,7 +150,7 @@ public class PollServices {
         return poll;
     }
 
-    public static Poll removeOptionFromPoll(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException {
+    public static Poll removeOptionFromPoll(int userId, JSONObject data) throws JSONException, DataBaseErrorException, AccessViolationException, PollAlreadyClosedException {
         int pollId = data.getInt("pollId");
         int pollOptionId = data.getInt("optionId");
         User owner = UserDataHandler.getUser(userId);
@@ -157,11 +165,13 @@ public class PollServices {
         if (!poll.doesContainOption(pollOptionId))
             throw new AccessViolationException();
 
+        if (!poll.isOngoing())
+            throw new PollAlreadyClosedException();
+
+        UserServices.notifyDeletedOption(poll.getPollOptionUsers(pollOptionId), poll.getId());
         poll.removeOption(pollOptionId);
         PollOptionDataHandler.removeOption(pollOptionId);
         PollDataHandler.updateOptions(poll);
-
-        UserServices.notifyDeletedOption(poll.getInvitedUserIds(), poll.getId());
 
         return poll;
     }
@@ -182,5 +192,23 @@ public class PollServices {
             polls.add(getPoll(pollId));
 
         return polls;
+    }
+
+    public static void closePoll(int userId, int pollId) throws DataBaseErrorException, AccessViolationException, PollAlreadyClosedException {
+        User owner = UserDataHandler.getUser(userId);
+        Poll poll = PollDataHandler.getPoll(pollId);
+
+        if (owner == null || poll == null)
+            throw new DataBaseErrorException();
+
+        if (!owner.didCreatedPoll(poll.getId()))
+            throw new AccessViolationException();
+
+        if (!poll.isOngoing())
+            throw new PollAlreadyClosedException();
+
+        PollDataHandler.unsetOngoingStatus(poll.getId());
+
+        UserServices.notifyPollClosed(poll.getInvitedUserIds(), poll.getId());
     }
 }

@@ -22,6 +22,13 @@ public class Poll {
         this.id = count++;
     }
 
+    public ArrayList<Integer> getPollOptionUsers(int pollOptionID) {
+        for (PollOption option : options) {
+            if (option.getId() == pollOptionID)
+                return option.getUserList();
+        }
+        return new ArrayList<>();
+    }
     public int getCreationTime() {
         return creationTime;
     }
