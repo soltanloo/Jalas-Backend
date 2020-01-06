@@ -302,7 +302,7 @@ public class PollsController {
 
     }
 
-    @RequestMapping(value = "/api/poll/{id}/close", method = RequestMethod.GET)
+    @RequestMapping(value = "/api/poll/{id}/close", method = RequestMethod.POST)
     public ResponseEntity closePoll (HttpServletRequest req, @PathVariable String id) {
         String userId = (String) req.getAttribute("userId");
         if (userId.equals(""))

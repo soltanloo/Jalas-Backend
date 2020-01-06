@@ -9,6 +9,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /*
@@ -20,7 +22,8 @@ import java.util.ArrayList;
  */
 
 public class PollDataHandler {
-    private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds, comments, containingCommentIds, creationTime)";
+    private static final String COLUMNS = "(id, title, options, isOngoing, ownerId, invitedUserIds, comments, containingCommentIds, creationTime, deadline, shouldAutoSet, isMeetingSet)";
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     public static void init() {
         DataManager.dropExistingTable("Poll");
@@ -37,8 +40,11 @@ public class PollDataHandler {
                     "ownerId INTEGER, " +
                     "invitedUserIds TEXT, " +
                     "comments TEXT, " +
-                    "containingCommentIds TEXT," +
-                    "creationTime INTEGER)";
+                    "containingCommentIds TEXT, " +
+                    "creationTime INTEGER, " +
+                    "deadline TEXT, " +
+                    "shouldAutoSet INTEGER, " +
+                    "isMeetingSet INTEGER)";
             st.executeUpdate(sql);
             st.close();
         } catch (SQLException e) {
@@ -48,7 +54,7 @@ public class PollDataHandler {
     }
 
     public static boolean addPoll(Poll poll) {
-        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Poll " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -77,7 +83,11 @@ public class PollDataHandler {
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
-                polls.add(pollDBtoDomain(rs));
+                try {
+                    polls.add(pollDBtoDomain(rs));
+                } catch (DataBaseErrorException e) {
+                    e.printStackTrace();
+                }
             }
 
             stmt.close();
@@ -124,6 +134,24 @@ public class PollDataHandler {
         try {
             PreparedStatement stmt = con.prepareStatement(sql);
             stmt.setInt(1, 0);
+            stmt.setInt(2, id);
+
+            stmt.executeUpdate();
+            stmt.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
+    public static void meetingSet(int id) throws DataBaseErrorException {
+        String sql = "UPDATE Poll SET isMeetingSet = ? WHERE id = ?";
+        Connection con = DataBaseConnector.getConnection();
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setInt(1, 1);
             stmt.setInt(2, id);
 
             stmt.executeUpdate();
@@ -244,6 +272,44 @@ public class PollDataHandler {
         }
     }
 
+    public static ArrayList<Poll> getOngoingPassedDeadlinePolls() throws DataBaseErrorException {
+        String sql = "SELECT * FROM Poll WHERE deadline < ? AND isOngoing = 1";
+        return getDesiredPolls(sql);
+    }
+
+    public static ArrayList<Poll> getMustSetPolls() throws DataBaseErrorException {
+        String sql = "SELECT * FROM Poll WHERE deadline < ? AND shouldAutoSet = 1 AND isMeetingSet = 0";
+        return getDesiredPolls(sql);
+    }
+
+    public static ArrayList<Poll> getDesiredPolls(String sql) throws DataBaseErrorException {
+        Connection con = DataBaseConnector.getConnection();
+        ArrayList<Poll> polls = new ArrayList<>();
+
+        try {
+            PreparedStatement stmt = con.prepareStatement(sql);
+            stmt.setString(1, sdf.format(new Timestamp(System.currentTimeMillis())));
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                try {
+                    polls.add(pollDBtoDomain(rs));
+                } catch (DataBaseErrorException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            stmt.close();
+            rs.close();
+            DataBaseConnector.releaseConnection(con);
+            return polls;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static void pollDomainToDB(Poll poll,  PreparedStatement st) {
         try {
             st.setInt(1, poll.getId());
@@ -258,6 +324,15 @@ public class PollDataHandler {
             st.setString(7, DataHelpers.stringify(poll.getCommentIds()));
             st.setString(8, DataHelpers.stringify(poll.getContainingCommentIds()));
             st.setInt(9, poll.getCreationTime());
+            st.setString(10, sdf.format(poll.getDeadline()));
+            if(poll.shouldAutoSet())
+                st.setInt(11, 1);
+            else
+                st.setInt(11, 0);
+            if(poll.isMeetingSet())
+                st.setInt(12, 1);
+            else
+                st.setInt(12, 0);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -287,12 +362,16 @@ public class PollDataHandler {
 
             poll.setContainingCommentIds(DataHelpers.makeList(rs.getString("containingCommentIds")));
             poll.setCreationTime(rs.getInt("creationTime"));
+            poll.setDeadline(sdf.parse(rs.getString("deadline")));
+            poll.setShouldAutoSet(rs.getInt("shouldAutoSet") == 1);
+            poll.setMeetingSet(rs.getInt("shouldAutoSet") == 1);
+
 
             return poll;
-        } catch(SQLException e) {
+        } catch(SQLException | ParseException e) {
             e.printStackTrace();
+            throw new DataBaseErrorException();
         }
-        return null;
     }
 
     public static void createSeedPolls(JSONArray jsonPolls) throws JSONException {

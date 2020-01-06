@@ -3,6 +3,7 @@ package Models;
 import ErrorClasses.NoCommentWithThisId;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -17,10 +18,39 @@ public class Poll {
     private int ownerId;
     private ArrayList<Integer> invitedUserIds = new ArrayList<>();
     private int creationTime;
+    private Date deadline;
+    private boolean shouldAutoSet = false;
+    private boolean meetingSet = false;
 
     public Poll(){
         this.id = count++;
     }
+
+
+    public boolean isMeetingSet() {
+        return meetingSet;
+    }
+
+    public void setMeetingSet(boolean meetingSet) {
+        this.meetingSet = meetingSet;
+    }
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
+    }
+
+    public boolean shouldAutoSet() {
+        return shouldAutoSet;
+    }
+
+    public void setShouldAutoSet(boolean shouldAutoSet) {
+        this.shouldAutoSet = shouldAutoSet;
+    }
+
 
     public ArrayList<Integer> getPollOptionUsers(int pollOptionID) {
         for (PollOption option : options) {

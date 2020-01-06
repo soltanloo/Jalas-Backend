@@ -1,10 +1,10 @@
 package BusinessLogic;
 
 import DataManagers.MeetingDataHandler;
-import DataManagers.UserDataHandler;
 import ErrorClasses.*;
 import Models.Meeting;
 import Models.Poll;
+import Models.PollOption;
 import Models.User;
 import Services.RoomReservationService;
 import org.json.JSONException;
@@ -24,12 +24,9 @@ public class MeetingServices {
 
         if(MeetingDataHandler.addMeeting(meeting)) {
             UserServices.addUserCreatedMeeting(poll.getOwnerId(), meeting.getId());
-            PollServices.unsetOngoingStatus(poll);
+            PollServices.meetingSetForPoll(poll);
 
-            for (int invUserId : poll.getInvitedUserIds()) {
-                UserServices.addUserInvitedMeeting(invUserId, meeting.getId());
-            }
-            UserServices.notifyNewMeeting(poll.getInvitedUserIds(), meeting.getId());
+            UserServices.inviteUsersToMeeting(poll.getInvitedUserIds(), meeting.getId());
 
             if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {
                 MeetingDataHandler.setMeetingStatus(meeting);
@@ -94,4 +91,40 @@ public class MeetingServices {
 
         return meetings;
     }
+
+    public static void addAutoMeeting(Poll poll) throws DataBaseErrorException, RoomReservationErrorException {
+        Meeting meeting = createAutoCreatedMeeting(poll);
+
+        if(MeetingDataHandler.addMeeting(meeting)) {
+            UserServices.addUserCreatedMeeting(poll.getOwnerId(), meeting.getId());
+            PollServices.meetingSetForPoll(poll);
+
+            UserServices.inviteUsersToMeeting(poll.getInvitedUserIds(), meeting.getId());
+
+            if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {
+                MeetingDataHandler.setMeetingStatus(meeting);
+                return;
+            }
+            throw new RoomReservationErrorException();
+        }
+        else {
+            throw new DataBaseErrorException();
+        }
+    }
+
+    public static Meeting createAutoCreatedMeeting(Poll poll) throws RoomReservationErrorException {
+        Meeting meeting = new Meeting();
+        PollOption bestPollOption = PollServices.getBestPollOption(poll);
+        Integer roomNumber = RoomReservationService.getFirstAvailableRoom(bestPollOption.getStartTime(), bestPollOption.getFinishTime());
+
+        meeting.setRoomNumber(roomNumber);
+        meeting.setStartTime(bestPollOption.getStartTime());
+        meeting.setFinishTime(bestPollOption.getFinishTime());
+        meeting.setTitle(poll.getTitle());
+        meeting.setOwnerId(poll.getOwnerId());
+        meeting.setInvitedUserIds(poll.getInvitedUserIds());
+        meeting.setCreateTime(sdf.format(new Timestamp(System.currentTimeMillis())));
+        return meeting;
+    }
+
 }

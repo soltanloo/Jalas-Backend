@@ -11,9 +11,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class PollServices {
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     public static ArrayList<Poll> getAllPolls() throws DataBaseErrorException {
         return PollDataHandler.getAllPols();
@@ -156,6 +159,15 @@ public class PollServices {
         poll.setOngoing(true);
         poll.setOwnerId(userId);
         poll.setCreationTime(data.getInt("creationTime"));
+        if(!data.isNull("deadline")) {
+            try {
+                poll.setDeadline(sdf.parse(data.getString("deadline")));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+        poll.setShouldAutoSet(data.getInt("shouldAutoSet") == 1);
+
         return poll;
     }
 
@@ -216,9 +228,12 @@ public class PollServices {
     }
 
 
-    public static void unsetOngoingStatus(Poll poll) throws DataBaseErrorException {
+    public static void meetingSetForPoll(Poll poll) throws DataBaseErrorException {
         PollDataHandler.unsetOngoingStatus(poll.getId());
+        PollDataHandler.meetingSet(poll.getId());
     }
+
+
 
     public static ArrayList<Poll> getUserPolls(int userId) throws DataBaseErrorException {
         User user = UserServices.getUser(userId);
@@ -242,5 +257,16 @@ public class PollServices {
         PollDataHandler.unsetOngoingStatus(poll.getId());
 
         UserServices.notifyPollClosed(poll.getInvitedUserIds(), poll.getId());
+    }
+
+    public static PollOption getBestPollOption(Poll poll) {
+        ArrayList<PollOption> pollOptions = poll.getOptions();
+        int maxVoteNum = 0;
+        int bestPollOptionIndex = 0;
+        for(int i = 0; i < pollOptions.size(); i++) {
+            if (pollOptions.get(i).getUserList().size() > maxVoteNum)
+                bestPollOptionIndex = i;
+        }
+        return pollOptions.get(bestPollOptionIndex);
     }
 }

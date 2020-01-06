@@ -4,6 +4,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.net.URI;
 
+import ErrorClasses.RoomReservationErrorException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,5 +96,18 @@ public class RoomReservationService {
 
         System.out.println(body.toString());
         return HttpRequest.BodyPublishers.ofString(body.toString());
+    }
+
+    public static Integer getFirstAvailableRoom(String startTime, String finishTime) throws RoomReservationErrorException {
+        Integer roomNumber = null;
+        while (roomNumber == null) {
+            ArrayList<Integer> rooms = getFreeRooms(startTime, finishTime);
+            if (rooms == null)
+                continue;
+            if(rooms.size() == 0)
+                throw new RoomReservationErrorException();
+            roomNumber = rooms.get(0);
+        }
+        return roomNumber;
     }
 }

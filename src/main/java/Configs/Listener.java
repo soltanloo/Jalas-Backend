@@ -9,6 +9,8 @@ import javax.servlet.ServletRequestEvent;
 import javax.servlet.ServletRequestListener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.*;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 public class Listener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener, ServletRequestListener {
 
     private ScheduledExecutorService scheduler;
+    private static final SimpleDateFormat sdf = new SimpleDateFormat("YYYY-MM-DD'T'HH:mm:ss");
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -28,6 +31,8 @@ public class Listener implements ServletContextListener, HttpSessionListener, Ht
         }
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new PeriodRoomCheck(), 1, 1, TimeUnit.MINUTES);
+        scheduler.scheduleAtFixedRate(new PeriodPollDeadlineCheck(), 1, 1, TimeUnit.MINUTES);
+        System.out.println(sdf.format(new Timestamp(System.currentTimeMillis())));
     }
 
     @Override

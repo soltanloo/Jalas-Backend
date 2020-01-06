@@ -6,12 +6,12 @@ import Services.RoomReservationService;
 
 import java.util.List;
 
-public class PeriodRoomCheck implements Runnable  {
+public class PeriodRoomCheck implements Runnable {
     @Override
     public void run () {
         try {
-            List<Meeting> stalledMeetings = MeetingDataHandler.getStalledMeetings();
             System.out.println("stalled meetings check");
+            List<Meeting> stalledMeetings = MeetingDataHandler.getStalledMeetings();
 
             for (Meeting meeting : stalledMeetings) {
                 if(RoomReservationService.reserveRoom(meeting.getRoomNumber(), "Juggernaut", meeting.getStartTime(), meeting.getFinishTime())) {

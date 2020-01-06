@@ -141,4 +141,11 @@ public class UserServices {
             EmailService.sendMail(getUserEmail(userID), content);
         }
     }
+
+    public static void inviteUsersToMeeting(ArrayList<Integer> invitedUserIds, int meetingId) throws DataBaseErrorException {
+        for (int invUserId : invitedUserIds) {
+            addUserInvitedMeeting(invUserId, meetingId);
+        }
+        notifyNewMeeting(invitedUserIds, meetingId);
+    }
 }
