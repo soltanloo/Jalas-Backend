@@ -18,7 +18,7 @@ public class Poll {
     private int ownerId;
     private ArrayList<Integer> invitedUserIds = new ArrayList<>();
     private int creationTime;
-    private Date deadline;
+    private String deadline;
     private boolean shouldAutoSet = false;
     private boolean meetingSet = false;
 
@@ -35,11 +35,11 @@ public class Poll {
         this.meetingSet = meetingSet;
     }
 
-    public Date getDeadline() {
+    public String getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Date deadline) {
+    public void setDeadline(String deadline) {
         this.deadline = deadline;
     }
 

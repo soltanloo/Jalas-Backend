@@ -44,7 +44,6 @@ public class RoomReservationService {
         try {
             JSONObject data = new JSONObject(response.body());
             JSONArray roomsList = data.getJSONArray("availableRooms");
-            System.out.println(roomsList);
             for(int i = 0; i < roomsList.length(); i++) {
                 retRoomList.add(roomsList.getInt(i));
             }

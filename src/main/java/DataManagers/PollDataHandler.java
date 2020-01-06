@@ -324,7 +324,7 @@ public class PollDataHandler {
             st.setString(7, DataHelpers.stringify(poll.getCommentIds()));
             st.setString(8, DataHelpers.stringify(poll.getContainingCommentIds()));
             st.setInt(9, poll.getCreationTime());
-            st.setString(10, sdf.format(poll.getDeadline()));
+            st.setString(10, poll.getDeadline());
             if(poll.shouldAutoSet())
                 st.setInt(11, 1);
             else
@@ -362,13 +362,13 @@ public class PollDataHandler {
 
             poll.setContainingCommentIds(DataHelpers.makeList(rs.getString("containingCommentIds")));
             poll.setCreationTime(rs.getInt("creationTime"));
-            poll.setDeadline(sdf.parse(rs.getString("deadline")));
+            poll.setDeadline(rs.getString("deadline"));
             poll.setShouldAutoSet(rs.getInt("shouldAutoSet") == 1);
             poll.setMeetingSet(rs.getInt("shouldAutoSet") == 1);
 
 
             return poll;
-        } catch(SQLException | ParseException e) {
+        } catch(SQLException e) {
             e.printStackTrace();
             throw new DataBaseErrorException();
         }

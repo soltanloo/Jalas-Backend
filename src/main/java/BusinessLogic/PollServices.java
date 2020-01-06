@@ -161,7 +161,9 @@ public class PollServices {
         poll.setCreationTime(data.getInt("creationTime"));
         if(!data.isNull("deadline")) {
             try {
-                poll.setDeadline(sdf.parse(data.getString("deadline")));
+                System.out.println(sdf.parse(data.getString("deadline")));
+                System.out.println(data.getString("deadline"));
+                poll.setDeadline(data.getString("deadline"));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
