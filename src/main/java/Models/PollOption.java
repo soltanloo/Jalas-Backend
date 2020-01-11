@@ -89,4 +89,11 @@ public class PollOption {
             if (userList.get(i) == userId)
                 userList.remove(i);
     }
+
+    public boolean hasUserVoted(int userId) {
+        for(Integer id : this.userList)
+            if (id == userId)
+                return true;
+        return false;
+    }
 }

@@ -29,39 +29,43 @@ public class PollServices {
     public static void addVote(int userId, JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException, DuplicateVoteException, PollFinishedException {
         int pollID = data.getInt("pollId");
         Poll poll = PollDataHandler.getPoll(pollID);
+        checkPreConstraintsForAddVote(userId, poll);
 
-        if (!data.isNull("optionId")) {
-            int optionID = data.getInt("optionId");
+        if (!data.isNull("votes")) {
+            ArrayList<Integer> votesList = getOptionList(data, "votes");
 
-            checkPreConstraintsForAddVote(userId, poll, optionID);
-
-            PollOption option = PollOptionDataHandler.getPollOption(optionID);
-            if (option == null)
-                throw new ObjectNotFoundInDBException();
-
-
-            boolean status = option.addVote(userId);
-            if(!status)
-                throw new DuplicateVoteException();
-
-            removePreviousVote(userId, poll);
-            PollOptionDataHandler.updateUserIDList(option);
-            UserServices.notifyNewVote(userId, pollID);
+            for (PollOption option : poll.getOptions()) {
+                if (votesList.contains(option.getId())) {
+                    if (!option.hasUserVoted(userId)) {
+                        option.addVote(userId);
+                        PollOptionDataHandler.updateUserIDList(option);
+                    }
+                }
+                else {
+                    if (option.hasUserVoted(userId)) {
+                        option.removeVotedUser(userId);
+                        PollOptionDataHandler.updateUserIDList(option);
+                    }
+                }
+            }
         }
 
         if (!data.isNull("agreeIfNeeded")) {
-            ArrayList<Integer> optionIdList = getOptionList(data, "agreeIfNeeded");
+            ArrayList<Integer> agreeIfNeededList = getOptionList(data, "agreeIfNeeded");
 
             for (PollOption option : poll.getOptions()) {
-                if (!optionIdList.contains(option.getId())) {
-                    option.removeUserAgreeIfNeeded(userId);
-                    continue;
+                if (agreeIfNeededList.contains(option.getId())) {
+                    if (!option.hasUserAgreedIfNeeded(userId)) {
+                        option.addUserAgreeIfNeeded(userId);
+                        PollOptionDataHandler.updateUserAgreeIfNeededList(option);
+                    }
                 }
-
-                checkPreConstraintsForAddVote(userId, poll, option.getId());
-                option.addUserAgreeIfNeeded(userId);
-
-                PollOptionDataHandler.updateUserAgreeIfNeededList(option);
+                else {
+                    if (option.hasUserAgreedIfNeeded(userId)) {
+                        option.removeUserAgreeIfNeeded(userId);
+                        PollOptionDataHandler.updateUserAgreeIfNeededList(option);
+                    }
+                }
             }
         }
 
@@ -84,14 +88,13 @@ public class PollServices {
         }
     }
 
-    public static void checkPreConstraintsForAddVote(int userId, Poll poll, int optionId) throws ObjectNotFoundInDBException, PollFinishedException, AccessViolationException {
+    public static void checkPreConstraintsForAddVote(int userId, Poll poll) throws ObjectNotFoundInDBException, PollFinishedException, AccessViolationException {
         if (poll == null)
             throw new ObjectNotFoundInDBException();
 
         if(!poll.isOngoing())
             throw new PollFinishedException();
-        if(!poll.doesContainOption(optionId))
-            throw new AccessViolationException();
+
         if(!poll.isUserInvited(userId))
             throw new AccessViolationException();
     }
