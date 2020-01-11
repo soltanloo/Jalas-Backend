@@ -97,6 +97,20 @@ public class CommentServices {
         }
         poll.addCommentId(newComment.getId());
         PollDataHandler.updateCommentIds(poll);
+        notifyMentionedUsers(userId, newComment);
+    }
+
+    public static void notifyMentionedUsers(int userId, Comment newComment) {
+        ArrayList<String> mentionedEmails = Services.EmailService.parseEmailsFromText(newComment.getContainingText());
+        for (String mentionedEmail : mentionedEmails) {
+            try {
+                int mentioned = UserDataHandler.getUserIdByEmail(mentionedEmail);
+                User mentioner = UserDataHandler.getUser(userId);
+                UserServices.notifyMention(mentioned, mentioner.getFirstName(), newComment.getId());
+            }catch(DataBaseErrorException e){
+                e.printStackTrace();
+            }
+        }
     }
 
     public static Comment createComment(int userId, JSONObject data, boolean isReply, int repliedCommentId, Poll poll) throws DataBaseErrorException, JSONException {
@@ -107,14 +121,6 @@ public class CommentServices {
         newComment.setCommentedPollId(poll.getId());
         newComment.setReply(isReply);
         newComment.setContainingText(data.getString("text"));
-        String mentionedEmail = Services.EmailService.parseEmailFromText(data.getString("text"));
-        if(mentionedEmail.equals(null) == false){
-            try {
-                int mentioned = UserDataHandler.getUserIdByEmail(mentionedEmail);
-                User mentioner = UserDataHandler.getUser(userId);
-                UserServices.notifyMention(mentioned, mentioner.getFirstName(), newComment.getId());
-            }catch(DataBaseErrorException e){ }
-        }
         return newComment;
     }
 
