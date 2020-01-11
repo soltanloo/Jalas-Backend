@@ -104,9 +104,9 @@ public class CommentServices {
         ArrayList<String> mentionedEmails = Services.EmailService.parseEmailsFromText(newComment.getContainingText());
         for (String mentionedEmail : mentionedEmails) {
             try {
-                int mentioned = UserDataHandler.getUserIdByEmail(mentionedEmail);
+                User mentioned = UserDataHandler.getUserByEmail(mentionedEmail);
                 User mentioner = UserDataHandler.getUser(userId);
-                UserServices.notifyMention(mentioned, mentioner.getFirstName(), newComment.getId());
+                UserServices.notifyMention(mentioned, mentioner, newComment.getId());
             }catch(DataBaseErrorException e){
                 e.printStackTrace();
             }

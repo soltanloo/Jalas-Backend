@@ -6,6 +6,7 @@ import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.InvalidEmailAddressException;
 import ErrorClasses.NoSuchUsernameException;
 import ErrorClasses.WrongPasswordException;
+import Models.Comment;
 import Models.User;
 import Services.EmailService;
 import Services.MD5Service;
@@ -134,10 +135,10 @@ public class UserServices {
         }
     }
 
-    public static void notifyMention(int userId, String mentioner, int commentId) throws DataBaseErrorException {
-        String content = "You have been mentiond by!\n" + mentioner +
+    public static void notifyMention(User mentioned, User mentioner, int commentId) throws DataBaseErrorException {
+        String content = "You have been mentiond by :\n" + mentioner.getEmail() + "\n" +
                 "api/poll/comment" + commentId;
-        EmailService.sendMail(getUserEmail(userId), content);
+        EmailService.sendMail(mentioned.getEmail(), content);
     }
 
     public static void notifyCanceledMeeting(ArrayList<Integer> userIds, int meetingId) throws DataBaseErrorException {
