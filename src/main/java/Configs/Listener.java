@@ -33,7 +33,6 @@ public class Listener implements ServletContextListener, HttpSessionListener, Ht
         scheduler = Executors.newSingleThreadScheduledExecutor();
         scheduler.scheduleAtFixedRate(new PeriodRoomCheck(), 1, 1, TimeUnit.MINUTES);
         scheduler.scheduleAtFixedRate(new PeriodPollDeadlineCheck(), 1, 1, TimeUnit.MINUTES);
-        System.out.println(EmailService.parseEmailsFromText("rastin30@gmail.com is the best"));
     }
 
     @Override
