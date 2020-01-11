@@ -5,7 +5,7 @@ import Models.PollOption;
 import java.sql.*;
 
 public class PollOptionDataHandler {
-    private static final String COLUMNS = "(id, userList, startTime, finishTime)";
+    private static final String COLUMNS = "(id, userList, startTime, finishTime, userAgreeIfNeeded)";
 
     public static void init() {
         DataManager.dropExistingTable("PollOption");
@@ -18,7 +18,8 @@ public class PollOptionDataHandler {
                     "(id INTEGER PRIMARY KEY," +
                     "userList TEXT , " +
                     "startTime TEXT , " +
-                    "finishTime TEXT)";
+                    "finishTime TEXT, " +
+                    "userAgreeIfNeeded TEXT)";
             st.executeUpdate(sql);
 
             st.close();
@@ -29,7 +30,7 @@ public class PollOptionDataHandler {
     }
 
     public static void addOption(PollOption option) {
-        String sql = "INSERT INTO PollOption " + COLUMNS + " VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO PollOption " + COLUMNS + " VALUES (?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -102,12 +103,30 @@ public class PollOptionDataHandler {
         }
     }
 
+    public static void updateUserAgreeIfNeededList(PollOption pollOption) throws DataBaseErrorException {
+        String sql = "UPDATE PollOption SET userAgreeIfNeeded = ? where id = ?";
+        Connection con = DataBaseConnector.getConnection();
+        try {
+            PreparedStatement st = con.prepareStatement(sql);
+            st.setString(1, DataHelpers.stringify(pollOption.getUserAgreeIfNeeded()));
+            st.setInt(2, pollOption.getId());
+            st.executeUpdate();
+            st.close();
+            DataBaseConnector.releaseConnection(con);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DataBaseConnector.releaseConnection(con);
+            throw new DataBaseErrorException();
+        }
+    }
+
     public static void PollOptionDomainToDB(PollOption option,  PreparedStatement st) {
         try {
             st.setInt(1, option.getId());
             st.setString(2, DataHelpers.stringify(option.getUserList()));
             st.setString(3, option.getStartTime());
             st.setString(4, option.getFinishTime());
+            st.setString(5,DataHelpers.stringify(option.getUserAgreeIfNeeded()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -119,6 +138,7 @@ public class PollOptionDataHandler {
             PollOption option = new PollOption(rs.getString("startTime"), rs.getString("finishTime"));
             option.setId(rs.getInt("id"));
             option.setUserList(DataHelpers.makeList(rs.getString("userList")));
+            option.setUserAgreeIfNeeded(DataHelpers.makeList(rs.getString("userAgreeIfNeeded")));
             return option;
         } catch(SQLException e) {
             e.printStackTrace();

@@ -28,19 +28,44 @@ public class PollServices {
 
     public static void addVote(int userId, JSONObject data) throws JSONException, DataBaseErrorException, ObjectNotFoundInDBException, AccessViolationException, DuplicateVoteException, PollFinishedException {
         int pollID = data.getInt("pollId");
-        int optionID = data.getInt("optionId");
-
         Poll poll = PollDataHandler.getPoll(pollID);
-        PollOption option = PollOptionDataHandler.getPollOption(optionID);
-        checkPreConstraintsForAddVote(userId, poll, option);
 
-        boolean status = option.addVote(userId);
-        if(!status)
-            throw new DuplicateVoteException();
+        if (!data.isNull("optionId")) {
+            int optionID = data.getInt("optionId");
 
-        removePreviousVote(userId, poll);
-        PollOptionDataHandler.updateUserIDList(option);
-        UserServices.notifyNewVote(userId, pollID);
+            PollOption option = PollOptionDataHandler.getPollOption(optionID);
+            checkPreConstraintsForAddVote(userId, poll, option);
+
+            boolean status = option.addVote(userId);
+            if(!status)
+                throw new DuplicateVoteException();
+
+            removePreviousVote(userId, poll);
+            PollOptionDataHandler.updateUserIDList(option);
+            UserServices.notifyNewVote(userId, pollID);
+        }
+
+        if (!data.isNull("agreeIfNeeded")) {
+            JSONArray optionList = data.getJSONArray("agreeIfNeeded");
+            ArrayList<Integer> optionIdList = new ArrayList<>();
+            for (int i = 0; i < optionList.length(); i++) {
+                optionIdList.add(optionList.getInt(i));
+            }
+
+            for (PollOption pollOption : poll.getOptions())
+
+                pollOption.removeUserAgreeIfNeeded(userId);
+            for (int optionID : optionIdList) {
+                PollOption option = PollOptionDataHandler.getPollOption(optionID);
+                checkPreConstraintsForAddVote(userId, poll, option);
+
+                option.addUserAgreeIfNeeded(userId);
+            }
+
+            for (PollOption pollOption : poll.getOptions())
+                PollOptionDataHandler.updateUserAgreeIfNeededList(pollOption);
+        }
+
     }
 
     public static void removePreviousVote(int userId, Poll poll) throws DataBaseErrorException {
