@@ -33,8 +33,12 @@ public class PollServices {
         if (!data.isNull("optionId")) {
             int optionID = data.getInt("optionId");
 
+            checkPreConstraintsForAddVote(userId, poll, optionID);
+
             PollOption option = PollOptionDataHandler.getPollOption(optionID);
-            checkPreConstraintsForAddVote(userId, poll, option);
+            if (option == null)
+                throw new ObjectNotFoundInDBException();
+
 
             boolean status = option.addVote(userId);
             if(!status)
@@ -46,26 +50,30 @@ public class PollServices {
         }
 
         if (!data.isNull("agreeIfNeeded")) {
-            JSONArray optionList = data.getJSONArray("agreeIfNeeded");
-            ArrayList<Integer> optionIdList = new ArrayList<>();
-            for (int i = 0; i < optionList.length(); i++) {
-                optionIdList.add(optionList.getInt(i));
-            }
+            ArrayList<Integer> optionIdList = getOptionList(data, "agreeIfNeeded");
 
-            for (PollOption pollOption : poll.getOptions())
+            for (PollOption option : poll.getOptions()) {
+                if (!optionIdList.contains(option.getId())) {
+                    option.removeUserAgreeIfNeeded(userId);
+                    continue;
+                }
 
-                pollOption.removeUserAgreeIfNeeded(userId);
-            for (int optionID : optionIdList) {
-                PollOption option = PollOptionDataHandler.getPollOption(optionID);
-                checkPreConstraintsForAddVote(userId, poll, option);
-
+                checkPreConstraintsForAddVote(userId, poll, option.getId());
                 option.addUserAgreeIfNeeded(userId);
-            }
 
-            for (PollOption pollOption : poll.getOptions())
-                PollOptionDataHandler.updateUserAgreeIfNeededList(pollOption);
+                PollOptionDataHandler.updateUserAgreeIfNeededList(option);
+            }
         }
 
+    }
+
+    public static ArrayList<Integer> getOptionList(JSONObject data, String listName) throws JSONException {
+        JSONArray optionList = data.getJSONArray(listName);
+        ArrayList<Integer> optionIdList = new ArrayList<>();
+        for (int i = 0; i < optionList.length(); i++) {
+            optionIdList.add(optionList.getInt(i));
+        }
+        return optionIdList;
     }
 
     public static void removePreviousVote(int userId, Poll poll) throws DataBaseErrorException {
@@ -76,13 +84,13 @@ public class PollServices {
         }
     }
 
-    public static void checkPreConstraintsForAddVote(int userId, Poll poll, PollOption option) throws ObjectNotFoundInDBException, PollFinishedException, AccessViolationException {
-        if (option == null || poll == null)
+    public static void checkPreConstraintsForAddVote(int userId, Poll poll, int optionId) throws ObjectNotFoundInDBException, PollFinishedException, AccessViolationException {
+        if (poll == null)
             throw new ObjectNotFoundInDBException();
 
         if(!poll.isOngoing())
             throw new PollFinishedException();
-        if(!poll.doesContainOption(option.getId()))
+        if(!poll.doesContainOption(optionId))
             throw new AccessViolationException();
         if(!poll.isUserInvited(userId))
             throw new AccessViolationException();
@@ -289,10 +297,22 @@ public class PollServices {
     public static PollOption getBestPollOption(Poll poll) {
         ArrayList<PollOption> pollOptions = poll.getOptions();
         int maxVoteNum = 0;
+        int maxAgreedNum = 0;
         int bestPollOptionIndex = 0;
         for(int i = 0; i < pollOptions.size(); i++) {
-            if (pollOptions.get(i).getUserList().size() > maxVoteNum)
+            if (pollOptions.get(i).getUserList().size() > maxVoteNum) {
                 bestPollOptionIndex = i;
+                maxVoteNum = pollOptions.get(i).getUserList().size();
+                maxAgreedNum = pollOptions.get(i).getUserAgreeIfNeeded().size();
+            }
+
+            else if (pollOptions.get(i).getUserList().size() == maxVoteNum)
+                if (pollOptions.get(i).getUserAgreeIfNeeded().size() > maxAgreedNum) {
+                    bestPollOptionIndex = i;
+                    maxVoteNum = pollOptions.get(i).getUserList().size();
+                    maxAgreedNum = pollOptions.get(i).getUserAgreeIfNeeded().size();
+                }
+
         }
         return pollOptions.get(bestPollOptionIndex);
     }

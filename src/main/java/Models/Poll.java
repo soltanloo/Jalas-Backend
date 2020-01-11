@@ -137,6 +137,13 @@ public class Poll {
         this.options.add(option);
     }
 
+    public PollOption getOption(int optionId) {
+        for (PollOption option : options)
+            if (option.getId() == optionId)
+                return option;
+        return null;
+    }
+
     public String getTitle() {
         return title;
     }
