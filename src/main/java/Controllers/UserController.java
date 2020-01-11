@@ -2,9 +2,11 @@ package Controllers;
 
 import BusinessLogic.NotificationServices;
 import BusinessLogic.PollServices;
+import BusinessLogic.UserServices;
 import ErrorClasses.AccessViolationException;
 import ErrorClasses.DataBaseErrorException;
 import ErrorClasses.PollAlreadyClosedException;
+import Models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
@@ -15,7 +17,21 @@ import javax.servlet.http.HttpServletRequest;
 
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-public class NotificationController {
+public class UserController {
+    @GetMapping("/api/getProfile")
+    public ResponseEntity getUser(HttpServletRequest req) {
+        String userId = (String) req.getAttribute("userId");
+        if (userId.equals(""))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Login first");
+
+        try {
+            User user = UserServices.getUser(Integer.parseInt(userId));
+            return ResponseEntity.ok(user);
+        } catch (DataBaseErrorException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Problem in accessing DB");
+        }
+    }
     @RequestMapping(value = "/api/notification/newOption", method = RequestMethod.POST)
     public ResponseEntity manageNewOption (HttpServletRequest req, @RequestBody String reqData) {
         String userId = (String) req.getAttribute("userId");
