@@ -17,6 +17,105 @@ public class User {
     private String password;
     private String role;
 
+    public static int getCount() {
+        return count;
+    }
+
+    public static void setCount(int count) {
+        User.count = count;
+    }
+
+    public boolean isNotifyNewOptionOn() {
+        return notifyNewOptionOn;
+    }
+
+    public void setNotifyNewOptionOn(boolean notifyNewOptionOn) {
+        this.notifyNewOptionOn = notifyNewOptionOn;
+    }
+
+    public boolean isNotifyDeletedOptionOn() {
+        return notifyDeletedOptionOn;
+    }
+
+    public void setNotifyDeletedOptionOn(boolean notifyDeletedOptionOn) {
+        this.notifyDeletedOptionOn = notifyDeletedOptionOn;
+    }
+
+    public boolean isNotifyNewVoteOn() {
+        return notifyNewVoteOn;
+    }
+
+    public void setNotifyNewVoteOn(boolean notifyNewVoteOn) {
+        this.notifyNewVoteOn = notifyNewVoteOn;
+    }
+
+    public boolean isNotifyNewPollCreatedOn() {
+        return notifyNewPollCreatedOn;
+    }
+
+    public void setNotifyNewPollCreatedOn(boolean notifyNewPollCreatedOn) {
+        this.notifyNewPollCreatedOn = notifyNewPollCreatedOn;
+    }
+
+    public boolean isNotifyAddedToPollOn() {
+        return notifyAddedToPollOn;
+    }
+
+    public void setNotifyAddedToPollOn(boolean notifyAddedToPollOn) {
+        this.notifyAddedToPollOn = notifyAddedToPollOn;
+    }
+
+    public boolean isNotifyRemovedFromPollOn() {
+        return notifyRemovedFromPollOn;
+    }
+
+    public void setNotifyRemovedFromPollOn(boolean notifyRemovedFromPollOn) {
+        this.notifyRemovedFromPollOn = notifyRemovedFromPollOn;
+    }
+
+    public boolean isNotifyPollClosedOn() {
+        return notifyPollClosedOn;
+    }
+
+    public void setNotifyPollClosedOn(boolean notifyPollClosedOn) {
+        this.notifyPollClosedOn = notifyPollClosedOn;
+    }
+
+    public boolean isNotifyNewMeetingOn() {
+        return notifyNewMeetingOn;
+    }
+
+    public void setNotifyNewMeetingOn(boolean notifyNewMeetingOn) {
+        this.notifyNewMeetingOn = notifyNewMeetingOn;
+    }
+
+    public boolean isNotifyCanceledMeetingOn() {
+        return notifyCanceledMeetingOn;
+    }
+
+    public void setNotifyCanceledMeetingOn(boolean notifyCanceledMeetingOn) {
+        this.notifyCanceledMeetingOn = notifyCanceledMeetingOn;
+    }
+
+    private boolean notifyDeletedOptionOn = true;
+    private boolean notifyNewVoteOn = true;
+    private boolean notifyNewOptionOn = true;
+    private boolean notifyNewPollCreatedOn = true;
+    private boolean notifyAddedToPollOn = true;
+    private boolean notifyRemovedFromPollOn = true;
+    private boolean notifyPollClosedOn = true;
+    private boolean notifyNewMeetingOn = true;
+    private boolean notifyCanceledMeetingOn = true;
+    private boolean notifyMentionInCommentOn = true;
+
+    public boolean isNotifyMentionInCommentOn() {
+        return notifyMentionInCommentOn;
+    }
+
+    public void setNotifyMentionInCommentOn(boolean notifyMentionInCommentOn) {
+        this.notifyMentionInCommentOn = notifyMentionInCommentOn;
+    }
+
     public User() {
         id = count;
         count++;

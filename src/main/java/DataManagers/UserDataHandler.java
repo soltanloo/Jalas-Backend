@@ -45,7 +45,17 @@ public class UserDataHandler {
                     "invitedMeetingIds TEXT, " +
                     "isLoggedIn INTEGER, " +
                     "password TEXT, " +
-                    "role TEXT)";
+                    "role TEXT)" +
+                    "notifyDeletedOption INTEGER " +
+                    "notifyNewVoteOn INTEGER" +
+                    "notifyNewOptionOn INTEGER" +
+                    "notifyNewPollCreatedOn INTEGER" +
+                    "notifyAddedToPollOn INTEGER" +
+                    "notifyRemovedFromPollOn INTEGER" +
+                    "notifyPollClosedOn INTEGER" +
+                    "notifyNewMeetingOn INTEGER" +
+                    "notifyCanceledMeetingOn INTEGER" +
+                    "notifyMentionInCommentOn INTEGER";
             st.executeUpdate(sql);
 
             st.close();
@@ -57,7 +67,7 @@ public class UserDataHandler {
 
 
     public static void addUser(User user) throws DataBaseErrorException {
-        String sql = "INSERT INTO User " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO User " + COLUMNS + " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         Connection con = DataBaseConnector.getConnection();
         try{
             PreparedStatement st = con.prepareStatement(sql);
@@ -294,6 +304,48 @@ public class UserDataHandler {
                 st.setInt(9, 0);
             st.setString(10, user.getPassword());
             st.setString(11, user.getRole());
+            if(user.isNotifyDeletedOptionOn())
+                st.setInt(12, 1);
+            else
+                st.setInt(12, 0);
+            if(user.isNotifyNewVoteOn())
+                st.setInt(13, 1);
+            else
+                st.setInt(13, 0);
+            if(user.isNotifyNewOptionOn())
+                st.setInt(14, 1);
+            else
+                st.setInt(14, 0);
+            if(user.isNotifyNewPollCreatedOn())
+                st.setInt(15, 1);
+            else
+                st.setInt(15, 0);
+            if(user.isNotifyAddedToPollOn())
+                st.setInt(16, 1);
+            else
+                st.setInt(16, 0);
+            if(user.isNotifyRemovedFromPollOn())
+                st.setInt(17, 1);
+            else
+                st.setInt(17, 0);
+            if(user.isNotifyPollClosedOn())
+                st.setInt(18, 1);
+            else
+                st.setInt(18, 0);
+            if(user.isNotifyNewMeetingOn())
+                st.setInt(19, 1);
+            else
+                st.setInt(19, 0);
+            if(user.isNotifyCanceledMeetingOn())
+                st.setInt(20, 1);
+            else
+                st.setInt(20, 0);
+            if(user.isNotifyMentionInCommentOn())
+                st.setInt(21, 1);
+            else
+                st.setInt(21, 0);
+
+
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DataBaseErrorException();
@@ -317,6 +369,46 @@ public class UserDataHandler {
                 user.setLoggedIn(false);
             user.setPassword(rs.getString("password"));
             user.setRole(rs.getString("role"));
+            if (rs.getInt("notifyDeletedOptionOn") == 1)
+                user.setNotifyDeletedOptionOn(true);
+            else
+                user.setNotifyDeletedOptionOn(false);
+            if (rs.getInt("notifyNewVoteOn") == 1)
+                user.setNotifyNewVoteOn(true);
+            else
+                user.setNotifyNewVoteOn(false);
+            if (rs.getInt("notifyNewOptionOn") == 1)
+                user.setNotifyNewOptionOn(true);
+            else
+                user.setNotifyNewOptionOn(false);
+            if (rs.getInt("notifyNewPollCreatedOn") == 1)
+                user.setNotifyNewPollCreatedOn(true);
+            else
+                user.setNotifyNewPollCreatedOn(false);
+            if (rs.getInt("notifyAddedToPollOn") == 1)
+                user.setNotifyAddedToPollOn(true);
+            else
+                user.setNotifyAddedToPollOn(false);
+            if (rs.getInt("notifyRemovedFromPollOn") == 1)
+                user.setNotifyRemovedFromPollOn(true);
+            else
+                user.setNotifyRemovedFromPollOn(false);
+            if (rs.getInt("notifyPollClosedOn") == 1)
+                user.setNotifyPollClosedOn(true);
+            else
+                user.setNotifyPollClosedOn(false);
+            if (rs.getInt("notifyNewMeetingOn") == 1)
+                user.setNotifyNewMeetingOn(true);
+            else
+                user.setNotifyNewMeetingOn(false);
+            if (rs.getInt("notifyCanceledMeetingOn") == 1)
+                user.setNotifyCanceledMeetingOn(true);
+            else
+                user.setNotifyCanceledMeetingOn(false);
+            if (rs.getInt("notifyMentionInCommentOn") == 1)
+                user.setNotifyMentionInCommentOn(true);
+            else
+                user.setNotifyMentionInCommentOn(false);
             return user;
         } catch(SQLException e) {
             e.printStackTrace();

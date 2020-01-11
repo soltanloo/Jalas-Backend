@@ -2,9 +2,11 @@ package BusinessLogic;
 
 import DataManagers.CommentDataHandler;
 import DataManagers.PollDataHandler;
+import DataManagers.UserDataHandler;
 import ErrorClasses.*;
 import Models.Comment;
 import Models.Poll;
+import Models.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -105,6 +107,14 @@ public class CommentServices {
         newComment.setCommentedPollId(poll.getId());
         newComment.setReply(isReply);
         newComment.setContainingText(data.getString("text"));
+        String mentionedEmail = Services.EmailService.parseEmailFromText(data.getString("text"));
+        if(mentionedEmail.equals(null) == false){
+            try {
+                int mentioned = UserDataHandler.getUserIdByEmail(mentionedEmail);
+                User mentioner = UserDataHandler.getUser(userId);
+                UserServices.notifyMention(mentioned, mentioner.getFirstName(), newComment.getId());
+            }catch(DataBaseErrorException e){ }
+        }
         return newComment;
     }
 

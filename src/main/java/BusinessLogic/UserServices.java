@@ -134,6 +134,12 @@ public class UserServices {
         }
     }
 
+    public static void notifyMention(int userId, String mentioner, int commentId) throws DataBaseErrorException {
+        String content = "You have been mentiond by!\n" + mentioner +
+                "api/poll/comment" + commentId;
+        EmailService.sendMail(getUserEmail(userId), content);
+    }
+
     public static void notifyCanceledMeeting(ArrayList<Integer> userIds, int meetingId) throws DataBaseErrorException {
         String content = "Meeting has been canceled\n" +
                 "api/meeting/" + meetingId;
