@@ -23,6 +23,7 @@ public class DataManager {
         PollOptionDataHandler.init();
         UserDataHandler.init();
         CommentDataHandler.init();
+        NotificationDataHandler.init();
         addSeedUsers();
         //DataManager.addSeedPolls();
     }

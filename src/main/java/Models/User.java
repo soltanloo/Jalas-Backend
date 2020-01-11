@@ -16,6 +16,16 @@ public class User {
     private boolean isLoggedIn = false;
     private String password;
     private String role;
+    private boolean notifyDeletedOptionOn = true;
+    private boolean notifyNewVoteOn = true;
+    private boolean notifyNewOptionOn = true;
+    private boolean notifyNewPollCreatedOn = true;
+    private boolean notifyAddedToPollOn = true;
+    private boolean notifyRemovedFromPollOn = true;
+    private boolean notifyPollClosedOn = true;
+    private boolean notifyNewMeetingOn = true;
+    private boolean notifyCanceledMeetingOn = true;
+    private boolean notifyMentionInCommentOn = true;
 
     public static int getCount() {
         return count;
@@ -96,17 +106,6 @@ public class User {
     public void setNotifyCanceledMeetingOn(boolean notifyCanceledMeetingOn) {
         this.notifyCanceledMeetingOn = notifyCanceledMeetingOn;
     }
-
-    private boolean notifyDeletedOptionOn = true;
-    private boolean notifyNewVoteOn = true;
-    private boolean notifyNewOptionOn = true;
-    private boolean notifyNewPollCreatedOn = true;
-    private boolean notifyAddedToPollOn = true;
-    private boolean notifyRemovedFromPollOn = true;
-    private boolean notifyPollClosedOn = true;
-    private boolean notifyNewMeetingOn = true;
-    private boolean notifyCanceledMeetingOn = true;
-    private boolean notifyMentionInCommentOn = true;
 
     public boolean isNotifyMentionInCommentOn() {
         return notifyMentionInCommentOn;
